@@ -1,0 +1,18 @@
+package com.webcrafters.helpify.interfaces;
+
+import com.webcrafters.helpify.DTO.UsuarioConComentariosDTO;
+import com.webcrafters.helpify.DTO.UsuarioConDonacionesDTO;
+import com.webcrafters.helpify.DTO.UsuarioDTO;
+
+import java.util.List;
+
+public interface IUsuarioService {
+    public UsuarioDTO insertar(UsuarioDTO usuarioDTO);
+    public UsuarioDTO actualizar(UsuarioDTO usuarioDTO);
+    public void eliminar(Long id);
+    public UsuarioDTO buscarPorId(Long idUsuario);
+    public List<UsuarioDTO> listarTodos();
+    public List<UsuarioConComentariosDTO> listarUsuariosConComentarios();
+    public List<UsuarioConDonacionesDTO> listarUsuariosConDonaciones();
+
+}
