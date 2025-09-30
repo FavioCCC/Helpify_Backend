@@ -1,0 +1,58 @@
+package com.webcrafters.helpify.DTO;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProyectoDTO {
+    private Long idproyecto;
+
+    @NotBlank(message = "El nombre del proyecto no puede estar vacío")
+    @Size(min = 10, max = 50, message = "El nombre del proyecto debe tener entre 10 y 50 caracteres")
+    private String nombreproyecto;
+
+    @NotBlank(message = "La descripción del proyecto no puede estar vacía")
+    @Size(min = 50, max = 300, message = "La descripción del proyecto debe tener entre 50 y 300 caracteres")
+    private String descripcion;
+
+    @NotNull(message = "El monto objetivo del proyecto no puede estar vacío")
+    @Positive(message = "El monto objetivo debe ser mayor que 0")
+    private double montoobjetivo;
+
+    @NotNull(message = "El monto recaudado del proyecto no puede estar vacío")
+    @Positive(message = "El monto recaudado debe ser mayor que 0")
+    private double montorecaudado;
+
+    @NotNull(message = "La fecha de inicio del proyecto no puede ser nula")
+    private LocalDate fechainicio;
+
+    @NotNull(message = "La fecha de finalización del proyecto no puede ser nula")
+    private LocalDate fechafin;
+
+    @NotBlank(message = "El nombre de la organización no puede estar vacío")
+    private String nombreorganización;
+
+    @NotBlank(message = "El nombre de la escuela beneficiada no puede estar vacío")
+    private String escuelabeneficiada;
+
+    @NotNull(message = "El cupo maximo no puede estar vacío")
+    private int cupoMaximo;
+
+    private List<ComentarioSinProyectoyUsuarioDTO> comentarios = new ArrayList<>();
+
+    private List<DonacionSinUsuarioyProyectoDTO> donaciones = new ArrayList<>();
+    private List<NotificacionSinProyectoyUsuarioDTO> notificaciones = new ArrayList<>();
+}
