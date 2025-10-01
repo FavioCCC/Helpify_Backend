@@ -1,9 +1,7 @@
 package com.webcrafters.helpify.interfaces;
 
-import com.webcrafters.helpify.DTO.ProyectoConComentariosDTO;
-import com.webcrafters.helpify.DTO.ProyectoConDonacionesDTO;
-import com.webcrafters.helpify.DTO.ProyectoDTO;
-import com.webcrafters.helpify.DTO.ProyectoSoloConDatosDTO;
+import com.webcrafters.helpify.DTO.*;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,4 +20,10 @@ public interface IProyectoService {
     public List<ProyectoSoloConDatosDTO> buscarPorMontoObjetivo(double monto);
     public List<ProyectoSoloConDatosDTO> buscarPorFechaInicioEntreFechaFin(LocalDate fechaInicio, LocalDate fechaFin);
     public List<ProyectoSoloConDatosDTO> buscarPorAnioYMes(int anio, int mes);
+
+    List<UniversitariosPorProyectoDTO> obtenerUniversitariosPorProyecto();
+
+    long obtenerTotalUniversitarios();
+
+    List<PorcentajeUniversitariosDTO> obtenerPorcentajeUniversitariosPorProyecto(@Param("total") long total);
 }
