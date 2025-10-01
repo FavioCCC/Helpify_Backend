@@ -1,9 +1,6 @@
 package com.webcrafters.helpify.controladores;
 
-import com.webcrafters.helpify.DTO.ProyectoConComentariosDTO;
-import com.webcrafters.helpify.DTO.ProyectoConDonacionesDTO;
-import com.webcrafters.helpify.DTO.ProyectoDTO;
-import com.webcrafters.helpify.DTO.ProyectoSoloConDatosDTO;
+import com.webcrafters.helpify.DTO.*;
 import com.webcrafters.helpify.interfaces.IProyectoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -86,4 +83,16 @@ public class ProyectoController {
     public List<ProyectoSoloConDatosDTO> buscarPorAnioYMes(@RequestParam int anio, @RequestParam int mes) {
         return proyectoService.buscarPorAnioYMes(anio, mes);
     }
+
+    @GetMapping("/universitarios-por-proyecto")
+    public List<UniversitariosPorProyectoDTO> obtenerUniversitariosPorProyecto() {
+        return proyectoService.obtenerUniversitariosPorProyecto();
+    }
+
+    @GetMapping("/porcentaje-universitarios")
+    public List<PorcentajeUniversitariosDTO> obtenerPorcentajeUniversitariosPorProyecto() {
+        long total = proyectoService.obtenerTotalUniversitarios();
+        return proyectoService.obtenerPorcentajeUniversitariosPorProyecto(total);
+    }
 }
+

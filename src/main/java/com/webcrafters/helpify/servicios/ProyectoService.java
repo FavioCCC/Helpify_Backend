@@ -128,5 +128,20 @@ public class ProyectoService implements IProyectoService {
                 .map(proyecto -> modelMapper.map(proyecto, ProyectoSoloConDatosDTO.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<UniversitariosPorProyectoDTO> obtenerUniversitariosPorProyecto() {
+        return proyectoRepositorio.obtenerUniversitariosPorProyecto();
+    }
+
+    @Override
+    public long obtenerTotalUniversitarios() {
+        return proyectoRepositorio.obtenerTotalUniversitarios();
+    }
+
+    @Override
+    public List<PorcentajeUniversitariosDTO> obtenerPorcentajeUniversitariosPorProyecto(long total) {
+        return proyectoRepositorio.obtenerPorcentajeUniversitariosPorProyecto(total);
+    }
 }
 
