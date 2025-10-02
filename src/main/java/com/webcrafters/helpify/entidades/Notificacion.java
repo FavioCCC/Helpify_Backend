@@ -1,6 +1,7 @@
 package com.webcrafters.helpify.entidades;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

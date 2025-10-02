@@ -1,5 +1,4 @@
-package com.webcrafters.helpify.DTO;
-
+package com.webcrafters.helpify.seguridad.DTO;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -8,12 +7,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsuarioSoloConDatosDTO {
+public class UsuarioDTO {
     private Long idusuario;
 
     @NotBlank(message = "El número de documento no puede estar vacío")
@@ -48,4 +48,8 @@ public class UsuarioSoloConDatosDTO {
 
     private LocalDateTime fecharegistro;
 
+    private Set<String> roles;
+    private String jwt;
+
+    private Long idRol; //solo el id del rol
 }

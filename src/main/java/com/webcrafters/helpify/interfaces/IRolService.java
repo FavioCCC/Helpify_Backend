@@ -1,6 +1,6 @@
 package com.webcrafters.helpify.interfaces;
 
-import com.webcrafters.helpify.DTO.RolDTO;
+import com.webcrafters.helpify.seguridad.DTO.RolDTO;
 
 import java.util.List;
 

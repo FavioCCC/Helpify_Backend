@@ -1,8 +1,8 @@
 package com.webcrafters.helpify.controladores;
 
-import com.webcrafters.helpify.DTO.UsuarioConComentariosDTO;
-import com.webcrafters.helpify.DTO.UsuarioConDonacionesDTO;
-import com.webcrafters.helpify.DTO.UsuarioDTO;
+import com.webcrafters.helpify.seguridad.DTO.UsuarioConComentariosDTO;
+import com.webcrafters.helpify.seguridad.DTO.UsuarioConDonacionesDTO;
+import com.webcrafters.helpify.seguridad.DTO.UsuarioDTO;
 import com.webcrafters.helpify.interfaces.IUsuarioService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

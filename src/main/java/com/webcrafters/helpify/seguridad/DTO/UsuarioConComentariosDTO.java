@@ -1,5 +1,6 @@
-package com.webcrafters.helpify.DTO;
+package com.webcrafters.helpify.seguridad.DTO;
 
+import com.webcrafters.helpify.DTO.ComentarioSoloDatosDTO;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
