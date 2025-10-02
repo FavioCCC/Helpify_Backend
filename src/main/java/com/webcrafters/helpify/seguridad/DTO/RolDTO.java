@@ -1,4 +1,4 @@
-package com.webcrafters.helpify.DTO;
+package com.webcrafters.helpify.seguridad.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

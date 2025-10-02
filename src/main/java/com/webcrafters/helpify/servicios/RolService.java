@@ -1,9 +1,9 @@
 package com.webcrafters.helpify.servicios;
 
-import com.webcrafters.helpify.DTO.RolDTO;
-import com.webcrafters.helpify.entidades.Rol;
+import com.webcrafters.helpify.seguridad.DTO.RolDTO;
+import com.webcrafters.helpify.seguridad.entidades.Rol;
 import com.webcrafters.helpify.interfaces.IRolService;
-import com.webcrafters.helpify.repositorios.RolRepositorio;
+import com.webcrafters.helpify.seguridad.repositorios.RolRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

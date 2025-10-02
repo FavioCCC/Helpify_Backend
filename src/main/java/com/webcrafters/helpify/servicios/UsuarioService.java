@@ -1,11 +1,14 @@
 package com.webcrafters.helpify.servicios;
 
 import com.webcrafters.helpify.DTO.*;
-import com.webcrafters.helpify.entidades.Rol;
-import com.webcrafters.helpify.entidades.Usuario;
+import com.webcrafters.helpify.seguridad.DTO.UsuarioConComentariosDTO;
+import com.webcrafters.helpify.seguridad.DTO.UsuarioConDonacionesDTO;
+import com.webcrafters.helpify.seguridad.DTO.UsuarioDTO;
+import com.webcrafters.helpify.seguridad.entidades.Rol;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
 import com.webcrafters.helpify.interfaces.IUsuarioService;
-import com.webcrafters.helpify.repositorios.RolRepositorio;
-import com.webcrafters.helpify.repositorios.UsuarioRepositorio;
+import com.webcrafters.helpify.seguridad.repositorios.RolRepositorio;
+import com.webcrafters.helpify.seguridad.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
