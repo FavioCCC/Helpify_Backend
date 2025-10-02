@@ -1,4 +1,4 @@
-package com.webcrafters.helpify.entidades;
+package com.webcrafters.helpify.seguridad.entidades;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

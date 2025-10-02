@@ -1,6 +1,6 @@
 package com.webcrafters.helpify.repositorios;
 
-import com.webcrafters.helpify.entidades.Usuario;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
 import com.webcrafters.helpify.entidades.Wishlist;
 import org.springframework.data.jpa.repository.JpaRepository;
 

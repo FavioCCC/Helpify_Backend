@@ -3,6 +3,8 @@ package com.webcrafters.helpify.servicios;
 import com.webcrafters.helpify.DTO.ProyectoSoloConDatosDTO;
 import com.webcrafters.helpify.entidades.*;
 import com.webcrafters.helpify.repositorios.*;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
+import com.webcrafters.helpify.seguridad.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

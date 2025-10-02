@@ -1,5 +1,6 @@
 package com.webcrafters.helpify.DTO;
 
+import com.webcrafters.helpify.seguridad.DTO.UsuarioSoloConDatosDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

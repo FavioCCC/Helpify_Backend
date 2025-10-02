@@ -1,6 +1,6 @@
 package com.webcrafters.helpify.controladores;
 
-import com.webcrafters.helpify.DTO.RolDTO;
+import com.webcrafters.helpify.seguridad.DTO.RolDTO;
 import com.webcrafters.helpify.interfaces.IRolService;
 import com.webcrafters.helpify.interfaces.IUsuarioService;
 import jakarta.validation.Valid;
