@@ -16,7 +16,6 @@ import java.time.LocalDate;
 public class DonacionSinUsuarioyProyectoDTO {
     private Long id;
     private LocalDate fechadonacion;
-    private BigDecimal montototal;
     private String estado;
     private UsuarioDTO usuario; // Solo datos del usuario, sin donaciones
     private ProyectoSoloConDatosDTO proyecto;

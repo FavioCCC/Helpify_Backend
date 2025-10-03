@@ -26,9 +26,6 @@ public class Donacion {
     @Column(name = "fechadonacion", nullable = false)
     private LocalDate fechadonacion;
 
-    @Column(name = "montototal", precision = 5, scale = 2)
-    private BigDecimal montototal;
-
     @Column(name = "estado", nullable = false, length = 10) // la longitud 10 puede cambiarse si se ve conveniente
     private String estado;
 

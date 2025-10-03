@@ -15,6 +15,5 @@ import java.time.LocalDate;
 public class DonacionSoloDatosDTO {
     private Long id;
     private LocalDate fechadonacion;
-    private BigDecimal montototal;
     private String estado;
 }

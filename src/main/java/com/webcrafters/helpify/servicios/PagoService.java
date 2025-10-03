@@ -7,6 +7,7 @@ import com.webcrafters.helpify.entidades.Pago;
 import com.webcrafters.helpify.interfaces.IPagoService;
 import com.webcrafters.helpify.repositorios.DonacionRepositorio;
 import com.webcrafters.helpify.repositorios.PagoRepositorio;
+import com.webcrafters.helpify.repositorios.ProyectoRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,10 @@ import java.util.stream.Collectors;
 public class PagoService implements IPagoService {
     @Autowired
     private PagoRepositorio pagoRepositorio;
+
+    @Autowired
+    private ProyectoRepositorio proyectoRepositorio;
+
     @Autowired
     private DonacionRepositorio donacionRepositorio;
     @Autowired
@@ -32,10 +37,15 @@ public class PagoService implements IPagoService {
                 .orElseThrow(() -> new RuntimeException("Donación no encontrada"));
 
         Pago pagoEntidad = modelMapper.map(pagoDTO, Pago.class);
-        // Asigna SIEMPRE la donación real, no solo el id
         pagoEntidad.setDonacion(donacion);
 
         Pago guardado = pagoRepositorio.save(pagoEntidad);
+
+        // Actualizar el monto recaudado del proyecto
+        var proyecto = donacion.getProyecto();
+        proyecto.setMontorecaudado(proyecto.getMontorecaudado() + guardado.getMonto().doubleValue());
+        proyectoRepositorio.save(proyecto); // <-- Guarda el proyecto actualizado
+
         return modelMapper.map(guardado, PagoDTO.class);
     }
 

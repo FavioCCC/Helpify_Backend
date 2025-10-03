@@ -1,3 +1,4 @@
+//Base de datos inicial
 INSERT INTO rol (nombre) VALUES ('ROLE_ADMIN');
 INSERT INTO rol (nombre) VALUES ('ROLE_VOLUNTARIO');
 
