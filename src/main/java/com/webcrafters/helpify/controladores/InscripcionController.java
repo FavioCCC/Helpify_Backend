@@ -6,6 +6,7 @@ import com.webcrafters.helpify.DTO.ReporteParticipacionDTO;
 import com.webcrafters.helpify.servicios.InscripcionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class InscripcionController {
     @Autowired
     private InscripcionService inscripcionService;
 
+    @PreAuthorize("hasRole('VOLUNTARIO')")
     @PostMapping("/inscribir")
     public ResponseEntity<InscripcionRespuestaDTO> inscribirEnProyecto(
             @RequestParam Long idUniversitario,
@@ -25,6 +27,7 @@ public class InscripcionController {
         return ResponseEntity.ok(respuesta);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
     @DeleteMapping("/eliminar")
     public ResponseEntity<InscripcionRespuestaDTO> cancelar(
             @RequestParam Long idUniversitario,
@@ -33,10 +36,13 @@ public class InscripcionController {
         return ResponseEntity.ok(respuesta);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
     @GetMapping("/inscripciones")
     public List<InscripcionSinUsuarioDTO> listarInscripciones() {
         return inscripcionService.listarTodasLasInscripciones();
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/reporte-participacion")
     public List<ReporteParticipacionDTO> reporteParticipacion() {
         return inscripcionService.generarReporteParticipacion();

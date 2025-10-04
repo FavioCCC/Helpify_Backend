@@ -5,6 +5,7 @@ import com.webcrafters.helpify.DTO.ComentarioSinProyectoyUsuarioDTO;
 import com.webcrafters.helpify.interfaces.IComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class ComentarioController {
     private IComentarioService comentarioService;
 
     // Crear comentario
+    @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
     @PostMapping("/{usuarioId}/proyecto/{proyectoId}")
     public ComentarioDTO insertarComentario(@RequestBody ComentarioDTO comentarioDTO,
                                             @PathVariable Long usuarioId,
@@ -24,6 +26,7 @@ public class ComentarioController {
     }
 
     // Actualizar comentario
+    @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
     @PutMapping("/comentario/{idUsuario}/proyecto/{idProyecto}")
     public ResponseEntity<ComentarioDTO> actualizarComentario(
             @RequestBody ComentarioDTO comentarioDTO,
@@ -34,6 +37,7 @@ public class ComentarioController {
 
 
     // Eliminar comentario
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @DeleteMapping("/{comentarioId}/usuario/{usuarioId}/proyecto/{proyectoId}")
     public void eliminarComentario(@PathVariable Long comentarioId,
                                    @PathVariable Long usuarioId,
@@ -42,6 +46,7 @@ public class ComentarioController {
     }
 
     // Listar comentarios por proyecto y usuario
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @GetMapping("/proyecto/{proyectoId}/usuario/{usuarioId}")
     public List<ComentarioSinProyectoyUsuarioDTO> listarPorProyectoYUsuario(@PathVariable Long proyectoId,
                                                                             @PathVariable Long usuarioId) {
@@ -50,6 +55,7 @@ public class ComentarioController {
 
 
     // Buscar comentarios por calificación
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @GetMapping("/calificacion/{estrella}")
     public List<ComentarioSinProyectoyUsuarioDTO> buscarPorCalificacion(@PathVariable double estrella) {
         return comentarioService.buscarPorCalificacion(estrella);
