@@ -1,6 +1,8 @@
 package com.webcrafters.helpify.servicios;
 
 import com.webcrafters.helpify.DTO.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.webcrafters.helpify.seguridad.DTO.UsuarioConComentariosDTO;
 import com.webcrafters.helpify.seguridad.DTO.UsuarioConDonacionesDTO;
 import com.webcrafters.helpify.seguridad.DTO.UsuarioDTO;
@@ -19,6 +21,9 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioService implements IUsuarioService {
 
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
     @Autowired
@@ -32,6 +37,9 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioDTO insertar(UsuarioDTO usuarioDTO) {
         Usuario usuarioEntidad = modelMapper.map(usuarioDTO, Usuario.class);
 
+        // Encriptar la contraseña antes de guardar
+        usuarioEntidad.setPassword(passwordEncoder.encode(usuarioDTO.getPassword()));
+
         if (usuarioDTO.getIdRol() != null) {
             Rol rol = rolRepositorio.findById(usuarioDTO.getIdRol())
                     .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + usuarioDTO.getIdRol()));
@@ -40,7 +48,6 @@ public class UsuarioService implements IUsuarioService {
 
         Usuario guardado = usuarioRepositorio.save(usuarioEntidad);
         UsuarioDTO dtoSalida = modelMapper.map(guardado, UsuarioDTO.class);
-        // Asignar manualmente el idRol si el rol existe
         if (guardado.getRol() != null) {
             dtoSalida.setIdRol(guardado.getRol().getIdrol());
         }

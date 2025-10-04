@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,30 +22,34 @@ public class RolController {
     @Autowired
     private IUsuarioService usuarioService;
 
-    @PostMapping(value = "/rol")
+    /*@PostMapping(value = "/rol")
     public ResponseEntity<RolDTO> insertarRol(@Valid @RequestBody RolDTO rolDTO) {
         // Si la validación falla, este código no se ejecutará.
         // Spring lanzará una excepción MethodArgumentNotValidException
         log.info("Registrando rol {}", rolDTO.getNombre());
         return ResponseEntity.ok(rolService.insertarRol(rolDTO));
-    }
+    }*/
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/roles")
     public List<RolDTO> listarRoles(){
         log.info("Lista de roles");
         return rolService.listarTodosLosRoles();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/rol/{idRol}")
     public ResponseEntity<RolDTO> buscarRolPorId(@PathVariable Long idRol){
         return ResponseEntity.ok(rolService.buscarRolPorId(idRol));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/rol")
     public ResponseEntity<RolDTO> actualizarRol(@RequestBody RolDTO rolDTO){
         return ResponseEntity.ok(rolService.actualizarRol(rolDTO));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/rol/{id}")
     public void eliminarRol(@PathVariable Long id)
     {
