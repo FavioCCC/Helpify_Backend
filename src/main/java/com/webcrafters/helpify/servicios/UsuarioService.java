@@ -55,6 +55,13 @@ public class UsuarioService implements IUsuarioService {
     }
 
     @Override
+    public Long obtenerIdPorUsername(String username) {
+        return usuarioRepositorio.findByNombre(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"))
+                .getIdusuario();
+    }
+
+    @Override
     public UsuarioDTO actualizar(UsuarioDTO usuarioDTO) {
         return usuarioRepositorio.findById(usuarioDTO.getIdusuario())
                 .map(existing -> {
