@@ -36,9 +36,16 @@ public class InscripcionService {
         }
         Proyecto proyecto = proyectoRepositorio.findById(idProyecto).get();
         Universitario universitario = universitarioRepositorio.findById(idUniversitario).get();
+
+        // Validar duplicados
+        boolean yaInscrito = inscripcionRepositorio.existsByUniversitarioAndProyecto(universitario, proyecto);
+        if (yaInscrito) {
+            return new InscripcionRespuestaDTO(false, "Ya estás inscrito en este proyecto");
+        }
+
         long inscritos = inscripcionRepositorio.countByProyecto(proyecto);
         if (inscritos >= proyecto.getCupoMaximo()) {
-            return new InscripcionRespuestaDTO(false, "No es posible inscribirse porque no hay vacantes disponibles");
+            return new InscripcionRespuestaDTO(false, "No hay vacantes disponibles");
         }
         Inscripcion inscripcion = new Inscripcion();
         inscripcion.setUniversitario(universitario);
@@ -56,11 +63,15 @@ public class InscripcionService {
     public InscripcionRespuestaDTO cancelarInscripcion(Long idUniversitario, Long idProyecto) {
         Universitario universitario = universitarioRepositorio.findById(idUniversitario).get();
         Proyecto proyecto = proyectoRepositorio.findById(idProyecto).get();
-        Inscripcion inscripcion = inscripcionRepositorio.findByUniversitarioAndProyecto(universitario, proyecto);
-        if (inscripcion == null) {
+        List<Inscripcion> inscripciones = inscripcionRepositorio.findByUniversitarioAndProyecto(universitario, proyecto);
+
+        if (inscripciones.isEmpty()) {
             return new InscripcionRespuestaDTO(false, "No tienes inscripción en este proyecto");
         }
-        inscripcionRepositorio.delete(inscripcion);
+        if (inscripciones.size() > 1) {
+            return new InscripcionRespuestaDTO(false, "Error: Inscripciones duplicadas para este universitario y proyecto");
+        }
+        inscripcionRepositorio.delete(inscripciones.get(0));
 
         // Aumentar cupo
         proyecto.setCupoMaximo(proyecto.getCupoMaximo() + 1);
