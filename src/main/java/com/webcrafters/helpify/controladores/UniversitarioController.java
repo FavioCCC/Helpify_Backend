@@ -30,7 +30,7 @@ public class UniversitarioController {
     public ResponseEntity<UniversitarioDTO> insertarUniversitario(@Valid @RequestBody UniversitarioDTO universitarioDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        Long idUsuario = usuarioService.obtenerIdPorUsername(username); // Implementa este método en tu servicio
+        Long idUsuario = usuarioService.obtenerIdPorUsername(username);
 
         universitarioDTO.setIdusuario(idUsuario);// Asocia el universitario al usuario autenticado
         return ResponseEntity.ok(universitarioService.insertarUniversitario(universitarioDTO));
