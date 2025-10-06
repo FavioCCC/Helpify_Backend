@@ -15,4 +15,6 @@ public interface IUsuarioService {
     public List<UsuarioConComentariosDTO> listarUsuariosConComentarios();
     public List<UsuarioConDonacionesDTO> listarUsuariosConDonaciones();
 
+    Long obtenerIdPorUsername(String username);
+
 }
