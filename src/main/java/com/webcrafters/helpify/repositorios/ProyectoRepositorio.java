@@ -18,14 +18,14 @@ public interface ProyectoRepositorio extends JpaRepository<Proyecto, Long> {
 
     List<Proyecto> findByFechainicioBetween(LocalDate fechainicio, LocalDate fechafin);
 
-    @Query("SELECT new com.upc.borradorhelpify.DTO.UniversitariosPorProyectoDTO(p.nombreproyecto, COUNT(i.universitario)) " +
+    @Query("SELECT new com.webcrafters.helpify.DTO.UniversitariosPorProyectoDTO(p.nombreproyecto, COUNT(i.universitario)) " +
             "FROM Proyecto p JOIN Inscripcion i ON i.proyecto = p GROUP BY p.nombreproyecto")
     List<UniversitariosPorProyectoDTO> obtenerUniversitariosPorProyecto();
 
     @Query("SELECT COUNT(u) FROM Universitario u")
     long obtenerTotalUniversitarios();
 
-    @Query("SELECT new com.upc.borradorhelpify.DTO.PorcentajeUniversitariosDTO(p.nombreproyecto, " +
+    @Query("SELECT new com.webcrafters.helpify.DTO.PorcentajeUniversitariosDTO(p.nombreproyecto, " +
             "(COUNT(i.universitario) * 1.0 / :total) * 100) " +
             "FROM Proyecto p JOIN Inscripcion i ON i.proyecto = p GROUP BY p.nombreproyecto")
     List<PorcentajeUniversitariosDTO> obtenerPorcentajeUniversitariosPorProyecto(@Param("total") long total);
