@@ -7,9 +7,14 @@ import com.webcrafters.helpify.servicios.InscripcionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -18,13 +23,22 @@ public class InscripcionController {
     @Autowired
     private InscripcionService inscripcionService;
 
-    @PreAuthorize("hasRole('VOLUNTARIO')")
-    @PostMapping("/inscribir")
-    public ResponseEntity<InscripcionRespuestaDTO> inscribirEnProyecto(
-            @RequestParam Long idUniversitario,
-            @RequestParam Long idProyecto) {
-        InscripcionRespuestaDTO respuesta = inscripcionService.inscribirEnProyecto(idUniversitario, idProyecto);
-        return ResponseEntity.ok(respuesta);
+    private String obtenerUsuarioAutenticado() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            throw new BadCredentialsException("Usuario no autenticado");
+        }
+        return authentication.getName();
+    }
+
+    @PostMapping("/{proyectoId}")
+    public ResponseEntity<?> inscribirEnProyecto(@PathVariable Long proyectoId) {
+        String username = obtenerUsuarioAutenticado();
+        inscripcionService.inscribirEnProyecto(proyectoId, username);
+        return ResponseEntity.ok(Map.of(
+                "message", "Inscripción registrada con éxito",
+                "proyectoId", proyectoId
+        ));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")

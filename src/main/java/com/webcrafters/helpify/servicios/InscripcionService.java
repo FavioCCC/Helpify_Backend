@@ -9,9 +9,14 @@ import com.webcrafters.helpify.entidades.Universitario;
 import com.webcrafters.helpify.repositorios.InscripcionRepositorio;
 import com.webcrafters.helpify.repositorios.ProyectoRepositorio;
 import com.webcrafters.helpify.repositorios.UniversitarioRepositorio;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
+import com.webcrafters.helpify.seguridad.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,42 +28,36 @@ public class InscripcionService {
     @Autowired
     private ProyectoRepositorio proyectoRepositorio;
     @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
+    @Autowired
     private UniversitarioRepositorio universitarioRepositorio;
     @Autowired
     private ModelMapper modelMapper;
 
-    public InscripcionRespuestaDTO inscribirEnProyecto(Long idUniversitario, Long idProyecto) {
-        if (!proyectoRepositorio.existsById(idProyecto)) {
-            return new InscripcionRespuestaDTO(false, "Proyecto no encontrado");
-        }
-        if (!universitarioRepositorio.existsById(idUniversitario)) {
-            return new InscripcionRespuestaDTO(false, "Universitario no encontrado");
-        }
-        Proyecto proyecto = proyectoRepositorio.findById(idProyecto).get();
-        Universitario universitario = universitarioRepositorio.findById(idUniversitario).get();
+    @Transactional
+    public void inscribirEnProyecto(Long proyectoId, String username) {
+        Usuario usuario = usuarioRepositorio.findByNombre(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario autenticado no encontrado: " + username));
 
-        // Validar duplicados
-        boolean yaInscrito = inscripcionRepositorio.existsByUniversitarioAndProyecto(universitario, proyecto);
-        if (yaInscrito) {
-            return new InscripcionRespuestaDTO(false, "Ya estás inscrito en este proyecto");
+        Universitario universitario = universitarioRepositorio.findByUsuarioIdusuario(usuario.getIdusuario())
+                .orElseThrow(() -> new BadCredentialsException("El usuario autenticado no tiene perfil Universitario"));
+
+        Proyecto proyecto = proyectoRepositorio.findById(proyectoId)
+                .orElseThrow(() -> new IllegalArgumentException("Proyecto no encontrado: " + proyectoId));
+
+        boolean existe = inscripcionRepositorio.existsByUniversitarioAndProyecto(universitario, proyecto);
+        if (existe) {
+            throw new IllegalStateException("El universitario ya está inscrito en este proyecto");
         }
 
-        long inscritos = inscripcionRepositorio.countByProyecto(proyecto);
-        if (inscritos >= proyecto.getCupoMaximo()) {
-            return new InscripcionRespuestaDTO(false, "No hay vacantes disponibles");
-        }
         Inscripcion inscripcion = new Inscripcion();
         inscripcion.setUniversitario(universitario);
         inscripcion.setProyecto(proyecto);
         inscripcion.setFecharegistro(LocalDateTime.now());
+
         inscripcionRepositorio.save(inscripcion);
-
-        // Disminuir cupo
-        proyecto.setCupoMaximo(proyecto.getCupoMaximo() - 1);
-        proyectoRepositorio.save(proyecto);
-
-        return new InscripcionRespuestaDTO(true, "Inscripción exitosa. Te has unido al proyecto");
     }
+
 
     public InscripcionRespuestaDTO cancelarInscripcion(Long idUniversitario, Long idProyecto) {
         Universitario universitario = universitarioRepositorio.findById(idUniversitario).get();

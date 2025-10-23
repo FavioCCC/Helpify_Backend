@@ -2,11 +2,19 @@ package com.webcrafters.helpify.servicios;
 
 import com.webcrafters.helpify.DTO.*;
 import com.webcrafters.helpify.entidades.Proyecto;
+import com.webcrafters.helpify.excepciones.GlobalExceptionHandle;
 import com.webcrafters.helpify.interfaces.IProyectoService;
+import com.webcrafters.helpify.repositorios.DonacionRepositorio;
 import com.webcrafters.helpify.repositorios.ProyectoRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,11 +27,52 @@ public class ProyectoService implements IProyectoService {
 
     @Autowired
     private ProyectoRepositorio proyectoRepositorio;
+
+    @Autowired
+    private DonacionRepositorio donacionRepositorio;
+
     @Autowired
     private ModelMapper modelMapper;
 
     @Override
     public ProyectoSoloConDatosDTO insertarProyecto(ProyectoDTO proyectoDTO) {
+        // Verificar autenticación: si no hay auth válida -> 401 (BadCredentialsException)
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            throw new BadCredentialsException("Usuario no autenticado");
+        }
+
+        // Verificar rol: si está autenticado pero no tiene ROLE_ADMIN -> 403 (AccessDeniedException)
+        boolean isAdmin = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> "ROLE_ADMIN".equals(role) || "ADMIN".equals(role));
+        if (!isAdmin) {
+            throw new AccessDeniedException("Usuario no tiene permisos suficientes");
+        }
+
+        // Validaciones básicas de campos obligatorios -> 400 (IllegalArgumentException)
+        if (proyectoDTO == null
+                || proyectoDTO.getNombreproyecto() == null || proyectoDTO.getNombreproyecto().trim().isEmpty()
+                || proyectoDTO.getFechainicio() == null
+                || proyectoDTO.getFechafin() == null) {
+            throw new IllegalArgumentException();
+        }
+
+        // Validación opcional de consistencia de fechas
+        if (proyectoDTO.getFechafin().isBefore(proyectoDTO.getFechainicio())) {
+            throw new IllegalArgumentException();
+        }
+
+        // Si existe campo montoobjetivo y es <= 0, considerar inválido
+        try {
+            double monto = proyectoDTO.getMontoobjetivo();
+            if (monto <= 0) {
+                throw new IllegalArgumentException();
+            }
+        } catch (NullPointerException ignored) {
+            // Si el getter devuelve objeto nulo, ya fue cubierto por validación anterior opcional
+        }
+
         Proyecto proyectoEntidad = modelMapper.map(proyectoDTO, Proyecto.class);
         Proyecto guardado = proyectoRepositorio.save(proyectoEntidad);
         return modelMapper.map(guardado, ProyectoSoloConDatosDTO.class);
@@ -46,6 +95,12 @@ public class ProyectoService implements IProyectoService {
         if (!proyectoRepositorio.existsById(id)) {
             throw new RuntimeException("Proyecto no encontrado con ID: " + id);
         }
+
+        // usar el parámetro 'id' y el método definido en DonacionRepositorio
+        if (donacionRepositorio.existsByProyecto_Idproyecto(id)) {
+            throw new GlobalExceptionHandle.ConflictException("No se puede eliminar un proyecto con donaciones asociadas.");
+        }
+
         proyectoRepositorio.deleteById(id);
     }
 

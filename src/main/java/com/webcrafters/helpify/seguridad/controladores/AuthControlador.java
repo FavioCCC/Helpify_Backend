@@ -15,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,24 +38,34 @@ public class AuthControlador {
     }
 
     @PostMapping("/autenticar")
-    public ResponseEntity<UsuarioDTO> createAuthenticationToken(@RequestBody UsuarioDTO authRequest) throws Exception {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.getNombre(), authRequest.getPassword())
-        );
+    public ResponseEntity<UsuarioDTO> createAuthenticationToken(@RequestBody UsuarioDTO authRequest) {
+        // Escenario 5: validación de campos vacíos -> manejado por GlobalExceptionHandle
+        if (authRequest == null ||
+                authRequest.getNombre() == null || authRequest.getNombre().trim().isEmpty() ||
+                authRequest.getPassword() == null || authRequest.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getNombre(), authRequest.getPassword())
+            );
+        } catch (org.springframework.security.authentication.BadCredentialsException ex) {
+            // Escenario 4: credenciales inválidas -> manejado por GlobalExceptionHandle
+            throw ex;
+        }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getNombre());
-        final String token = jwtUtil.generateToken(userDetails);
+        final String token = jwtUtil.generateToken(userDetails); // asegurar expiración en 20 minutos en JwtUtil
 
         Set<String> roles = userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
 
-        // Obtener el usuario desde la base de datos
         Usuario usuario = usuarioRepositorio.findByNombre(authRequest.getNombre())
-                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("No existe un usuario con las credenciales proporcionadas."));
 
-        // Mapear los datos al DTO
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setIdusuario(usuario.getIdusuario());
         usuarioDTO.setNumerodocumento(usuario.getNumerodocumento());

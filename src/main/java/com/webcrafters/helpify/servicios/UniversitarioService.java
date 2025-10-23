@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UniversitarioService implements IUniversitarioService {
+public class
+UniversitarioService implements IUniversitarioService {
     @Autowired
     private UniversitarioRepositorio universitarioRepositorio;
 
@@ -35,11 +36,19 @@ public class UniversitarioService implements IUniversitarioService {
         Usuario usuario = usuarioRepositorio.findById(universitarioDTO.getIdusuario())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + universitarioDTO.getIdusuario()));
 
+        if (usuario.getUniversitario() != null) {
+            throw new RuntimeException("El usuario ya tiene un perfil universitario asociado");
+        }
+
         Universitario universitario = new Universitario();
         universitario.setCodigoestudiante(universitarioDTO.getCodigoestudiante());
         universitario.setUsuario(usuario);
 
         Universitario guardado = universitarioRepositorio.save(universitario);
+
+        // asegurar la asociación desde la entidad Usuario (FK en usuario.iduniversitario)
+        usuario.setUniversitario(guardado);
+        usuarioRepositorio.save(usuario);
 
         UniversitarioDTO dto = new UniversitarioDTO();
         dto.setIduniversitario(guardado.getIduniversitario());

@@ -5,6 +5,8 @@ import com.webcrafters.helpify.interfaces.IProyectoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200",
         allowCredentials = "true",
-        exposedHeaders = "Authorization")
+        exposedHeaders = {"Authorization", "Mensaje"})
 @RequestMapping("/api")
 public class ProyectoController {
     @Autowired
@@ -25,11 +27,13 @@ public class ProyectoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/proyecto")
-    public ResponseEntity<ProyectoSoloConDatosDTO> insertarProyecto(@Valid @RequestBody ProyectoDTO proyectoDTO) {
-        // Si la validación falla, este código no se ejecutará.
-        // Spring lanzará una excepción MethodArgumentNotValidException
-        log.info("Registrando proyecto {}", proyectoDTO.getNombreproyecto());
-        return ResponseEntity.ok(proyectoService.insertarProyecto(proyectoDTO));
+    public ResponseEntity<RegistroProyectoRespuestaDTO> crearProyecto(@RequestBody ProyectoDTO proyectoDTO) {
+        ProyectoSoloConDatosDTO creado = proyectoService.insertarProyecto(proyectoDTO);
+        RegistroProyectoRespuestaDTO respuesta = new RegistroProyectoRespuestaDTO(
+                "Proyecto registrado correctamente",
+                creado
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
@@ -67,9 +71,11 @@ public class ProyectoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/proyecto/{id}")
-    public void eliminarProyecto(@PathVariable Long id)
-    {
+    public ResponseEntity<String> eliminarProyecto(@PathVariable Long id) {
         proyectoService.eliminarProyecto(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Mensaje", "El proyecto ha sido eliminado correctamente.");
+        return ResponseEntity.ok().headers(headers).body("El proyecto ha sido eliminado correctamente.");
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")

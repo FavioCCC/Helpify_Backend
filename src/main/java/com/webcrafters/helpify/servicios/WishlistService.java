@@ -27,7 +27,6 @@ public class WishlistService {
         this.wishlistRepositorio = wishlistRepositorio;
         this.proyectoRepositorio = proyectoRepositorio;
         this.usuarioRepositorio = usuarioRepositorio;
-        this.modelMapper = modelMapper;
     }
 
     public Wishlist agregarProyectoAWishlist(Long usuarioId, Long proyectoId) {
@@ -40,12 +39,16 @@ public class WishlistService {
         return wishlistRepositorio.save(wishlist);
     }
 
-    public Wishlist quitarProyectoDeWishlist(Long usuarioId, Long proyectoId) {
-        Usuario usuario = usuarioRepositorio.findById(usuarioId).orElseThrow();
-        Proyecto proyecto = proyectoRepositorio.findById(proyectoId).orElseThrow();
-        Wishlist wishlist = wishlistRepositorio.findByUsuario(usuario).orElseThrow();
-        wishlist.getProyectos().remove(proyecto);
-        return wishlistRepositorio.save(wishlist);
+    public void quitarProyectoDeWishlist(Long usuarioId, Long proyectoId) {
+        Usuario usuario = usuarioRepositorio.findById(usuarioId).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Proyecto proyecto = proyectoRepositorio.findById(proyectoId).orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
+        Wishlist wishlist = wishlistRepositorio.findByUsuario(usuario)
+                .orElseThrow(() -> new RuntimeException("Wishlist no encontrada para el usuario"));
+        boolean removed = wishlist.getProyectos().removeIf(p -> p.getIdproyecto().equals(proyecto.getIdproyecto()));
+        if (!removed) {
+            throw new RuntimeException("El proyecto no está en la wishlist");
+        }
+        wishlistRepositorio.save(wishlist);
     }
 
     public List<ProyectoSoloConDatosDTO> obtenerWishlist(Long usuarioId) {

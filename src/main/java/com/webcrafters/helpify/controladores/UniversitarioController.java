@@ -4,6 +4,8 @@ import com.webcrafters.helpify.DTO.UniversitarioConUsuarioDTO;
 import com.webcrafters.helpify.DTO.UniversitarioDTO;
 import com.webcrafters.helpify.interfaces.IUniversitarioService;
 import com.webcrafters.helpify.interfaces.IUsuarioService;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
+import com.webcrafters.helpify.seguridad.repositorios.UsuarioRepositorio;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +27,22 @@ public class UniversitarioController {
     @Autowired
     private IUsuarioService usuarioService;
 
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
+
     @PreAuthorize("hasRole('VOLUNTARIO')")
     @PostMapping("/universitario")
     public ResponseEntity<UniversitarioDTO> insertarUniversitario(@Valid @RequestBody UniversitarioDTO universitarioDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        Long idUsuario = usuarioService.obtenerIdPorUsername(username);
 
-        universitarioDTO.setIdusuario(idUsuario);// Asocia el universitario al usuario autenticado
+        Usuario usuario = usuarioRepositorio.findByNombre(username)
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado: " + username));
+
+        universitarioDTO.setIdusuario(usuario.getIdusuario()); // asociar al usuario autenticado
         return ResponseEntity.ok(universitarioService.insertarUniversitario(universitarioDTO));
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
     @GetMapping("/universitarios-con-usuario")
