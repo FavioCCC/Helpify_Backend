@@ -45,23 +45,20 @@ public class ComentarioService implements IComentarioService {
 
     @Override
     public ComentarioDTO actualizarComentario(ComentarioDTO comentarioDTO, Long idUsuario, Long idProyecto) {
-        return comentarioRepositorio.findById(comentarioDTO.getIdcomentario())
-                .map(existing -> {
-                    Usuario usuario = usuarioRepositorio.findById(idUsuario)
-                            .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + idUsuario));
-                    Proyecto proyecto = proyectoRepositorio.findById(idProyecto)
-                            .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + idProyecto));
+        Comentario existing = comentarioRepositorio.findById(comentarioDTO.getIdcomentario())
+                .orElseThrow(() -> new RuntimeException("Comentario con ID " + comentarioDTO.getIdcomentario() + " no encontrado"));
 
-                    existing.setComentario(comentarioDTO.getComentario());
-                    existing.setEstrella(comentarioDTO.getEstrella());
-                    existing.setUsuario(usuario);
-                    existing.setProyecto(proyecto);
+        // verificar que el comentario pertenezca al usuario y proyecto indicados
+        if (!existing.getUsuario().getIdusuario().equals(idUsuario) ||
+                !existing.getProyecto().getIdproyecto().equals(idProyecto)) {
+            throw new RuntimeException("No autorizado para actualizar este comentario");
+        }
 
-                    Comentario actualizado = comentarioRepositorio.save(existing);
-                    return modelMapper.map(actualizado, ComentarioDTO.class);
-                })
-                .orElseThrow(() -> new RuntimeException(
-                        "Comentario con ID " + comentarioDTO.getIdcomentario() + " no encontrado"));
+        existing.setComentario(comentarioDTO.getComentario());
+        existing.setEstrella(comentarioDTO.getEstrella());
+
+        Comentario actualizado = comentarioRepositorio.save(existing);
+        return modelMapper.map(actualizado, ComentarioDTO.class);
     }
 
     @Override
@@ -71,7 +68,7 @@ public class ComentarioService implements IComentarioService {
 
         if (!comentario.getUsuario().getIdusuario().equals(idUsuario) ||
                 !comentario.getProyecto().getIdproyecto().equals(idProyecto)) {
-            throw new RuntimeException("El comentario no corresponde al usuario/proyecto indicado");
+            throw new RuntimeException("No autorizado para eliminar este comentario");
         }
 
         comentarioRepositorio.deleteById(id);

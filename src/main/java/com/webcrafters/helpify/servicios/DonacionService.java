@@ -32,16 +32,22 @@ public class DonacionService implements IDonacionService {
     public DonacionDTO insertarDonacion(DonacionDTO donacionDTO) {
         Donacion donacionEntidad = modelMapper.map(donacionDTO, Donacion.class);
 
+        // Obtener usuario desde la DTO (controlador asegura que viene el id del usuario autenticado)
         if (donacionDTO.getUsuario() != null && donacionDTO.getUsuario().getIdusuario() != null) {
             Usuario usuario = usuarioRepositorio.findById(donacionDTO.getUsuario().getIdusuario())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             donacionEntidad.setUsuario(usuario);
+        } else {
+            throw new RuntimeException("Usuario de la donación no especificado");
         }
 
+        // Obtener proyecto desde la DTO
         if (donacionDTO.getProyecto() != null && donacionDTO.getProyecto().getIdproyecto() != null) {
             Proyecto proyecto = proyectoRepositorio.findById(donacionDTO.getProyecto().getIdproyecto())
                     .orElseThrow(() -> new RuntimeException("Proyecto no encontrado"));
             donacionEntidad.setProyecto(proyecto);
+        } else {
+            throw new RuntimeException("Proyecto de la donación no especificado");
         }
 
         Donacion guardado = donacionRepositorio.save(donacionEntidad);
@@ -52,9 +58,11 @@ public class DonacionService implements IDonacionService {
     public DonacionDTO actualizarDonacion(DonacionDTO donacionDTO) {
         return donacionRepositorio.findById(donacionDTO.getId())
                 .map(existing -> {
-                    Donacion donacionEntidad = modelMapper.map(donacionDTO, Donacion.class);
-                    Donacion guardado = donacionRepositorio.save(donacionEntidad);
-                    return modelMapper.map(guardado, DonacionDTO.class);
+                    // mapear campos editables (monto, estado, etc.) según DonacionDTO
+                    existing.setEstado(donacionDTO.getEstado());
+                    // si se permite cambiar proyecto/usuario, resolver entidades aquí
+                    Donacion actualizado = donacionRepositorio.save(existing);
+                    return modelMapper.map(actualizado, DonacionDTO.class);
                 })
                 .orElseThrow(() -> new RuntimeException("Donación con ID " + donacionDTO.getId() + " no encontrada"));
     }

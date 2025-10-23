@@ -3,11 +3,18 @@ package com.webcrafters.helpify.controladores;
 import com.webcrafters.helpify.DTO.DonacionDTO;
 import com.webcrafters.helpify.DTO.DonacionSinUsuarioyProyectoDTO;
 import com.webcrafters.helpify.interfaces.IDonacionService;
+import com.webcrafters.helpify.seguridad.DTO.UsuarioSoloConDatosDTO;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
+import com.webcrafters.helpify.seguridad.repositorios.UsuarioRepositorio;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,12 +29,33 @@ public class DonacionController {
     @Autowired
     private IDonacionService donacionService;
 
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
+
     @PreAuthorize("hasRole('DONANTE')")
     @PostMapping("/donacion")
     public ResponseEntity<DonacionDTO> insertarDonacion(@Valid @RequestBody DonacionDTO donacionDTO) {
-        // Si la validación falla, este código no se ejecutará.
-        // Spring lanzará una excepción MethodArgumentNotValidException
-        log.info("Registrando donacion {}", donacionDTO.getEstado());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            throw new BadCredentialsException("Usuario no autenticado");
+        }
+
+        String username = authentication.getName();
+        Usuario usuario = usuarioRepositorio.findByNombre(username)
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado: " + username));
+
+        // Asociar el id del usuario autenticado en la DTO para que el servicio lo use
+        if (donacionDTO.getUsuario() == null) {
+            UsuarioSoloConDatosDTO usuarioDto = new UsuarioSoloConDatosDTO();
+            usuarioDto.setIdusuario(usuario.getIdusuario());
+            donacionDTO.setUsuario(usuarioDto);
+        } else {
+            donacionDTO.getUsuario().setIdusuario(usuario.getIdusuario());
+        }
+
+        log.info("Registrando donacion por usuario id={} para proyecto id={}", usuario.getIdusuario(),
+                donacionDTO.getProyecto() != null ? donacionDTO.getProyecto().getIdproyecto() : "null");
+
         return ResponseEntity.ok(donacionService.insertarDonacion(donacionDTO));
     }
 
@@ -37,6 +65,7 @@ public class DonacionController {
         log.info("Lista de donaciones");
         return donacionService.listarTodos();
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN', 'DONANTE')")
     @GetMapping("/donacion/{idDonacion}")

@@ -12,10 +12,10 @@ services:
       - db
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=75929357
+      - POSTGRES_PASSWORD=Majo21161611
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/Borrador_Helpify
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=75929357
+      - SPRING_DATASOURCE_PASSWORD=Majo21161611
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
   db:
     image: postgres:16-alpine
@@ -27,7 +27,7 @@ services:
       - my-network-name
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=75929357
+      - POSTGRES_PASSWORD=Majo21161611
       - POSTGRES_DB=Borrador_Helpify
     ports:
       - "5433:5432"
