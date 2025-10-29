@@ -36,7 +36,6 @@ public class ProyectoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @GetMapping("/proyectos")
     public List<ProyectoSoloConDatosDTO> listarProyectos(){
         log.info("Lista de proyectos");
