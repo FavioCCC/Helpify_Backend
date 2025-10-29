@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/wishlist")
+@RequestMapping("/api")
 public class WishlistController {
     private final WishlistService wishlistService;
     private final UsuarioRepositorio usuarioRepositorio;
@@ -35,14 +35,14 @@ public class WishlistController {
     }
 
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @PostMapping("/agregar/{proyectoId}")
+    @PostMapping("/wishlist/agregar/{proyectoId}")
     public void agregarProyecto(@PathVariable Long proyectoId) {
         Usuario usuario = obtenerUsuarioAutenticado();
         wishlistService.agregarProyectoAWishlist(usuario.getIdusuario(), proyectoId);
     }
 
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @DeleteMapping("/quitar/{proyectoId}")
+    @DeleteMapping("/wishlist/quitar/{proyectoId}")
     public void quitarProyecto(@PathVariable Long proyectoId) {
         Usuario usuario = obtenerUsuarioAutenticado();
         wishlistService.quitarProyectoDeWishlist(usuario.getIdusuario(), proyectoId);

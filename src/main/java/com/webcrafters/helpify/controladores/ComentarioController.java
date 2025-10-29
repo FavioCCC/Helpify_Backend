@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/comentario")
+@RequestMapping("/api")
 public class ComentarioController {
     @Autowired
     private IComentarioService comentarioService;
@@ -37,7 +37,7 @@ public class ComentarioController {
 
     // Crear comentario
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @PostMapping("/proyecto/{proyectoId}")
+    @PostMapping("/comentario/proyecto/{proyectoId}")
     public ComentarioDTO insertarComentario(@RequestBody ComentarioDTO comentarioDTO,
                                             @PathVariable Long proyectoId) {
         Usuario usuario = obtenerUsuarioAutenticado();
@@ -46,7 +46,7 @@ public class ComentarioController {
 
     // Actualizar comentario
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @PutMapping("/proyecto/{proyectoId}")
+    @PutMapping("/comentario/proyecto/{proyectoId}")
     public ResponseEntity<ComentarioDTO> actualizarComentario(
             @RequestBody ComentarioDTO comentarioDTO,
             @PathVariable Long proyectoId) {
@@ -60,7 +60,7 @@ public class ComentarioController {
 
     // Eliminar comentario
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @DeleteMapping("/proyecto/{proyectoId}")
+    @DeleteMapping("/comentario/proyecto/{proyectoId}")
     public void eliminarComentario(@RequestBody ComentarioDTO comentarioDTO,
                                    @PathVariable Long proyectoId) {
         if (comentarioDTO.getIdcomentario() == null) {
@@ -72,7 +72,7 @@ public class ComentarioController {
 
     // Listar comentarios por proyecto y usuario
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
-    @GetMapping("/proyecto/{proyectoId}")
+    @GetMapping("/comentario/proyecto/{proyectoId}")
     public List<ComentarioSinProyectoyUsuarioDTO> listarPorProyectoYUsuario(@PathVariable Long proyectoId) {
         Usuario usuario = obtenerUsuarioAutenticado();
         return comentarioService.listarComentarioPorProyectoyUsuario(proyectoId, usuario.getIdusuario());
@@ -82,7 +82,7 @@ public class ComentarioController {
 
     // Buscar comentarios por calificación
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
-    @GetMapping("/calificacion/{estrella}")
+    @GetMapping("/comentario/calificacion/{estrella}")
     public List<ComentarioSinProyectoyUsuarioDTO> buscarPorCalificacion(@PathVariable double estrella) {
         return comentarioService.buscarPorCalificacion(estrella);
     }
