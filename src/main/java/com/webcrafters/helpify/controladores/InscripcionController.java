@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/inscripciones")
+@RequestMapping("/api")
 public class InscripcionController {
     @Autowired
     private InscripcionService inscripcionService;
@@ -31,7 +31,7 @@ public class InscripcionController {
         return authentication.getName();
     }
 
-    @PostMapping("/{proyectoId}")
+    @PostMapping("/inscripcion/{proyectoId}")
     public ResponseEntity<?> inscribirEnProyecto(@PathVariable Long proyectoId) {
         String username = obtenerUsuarioAutenticado();
         inscripcionService.inscribirEnProyecto(proyectoId, username);
@@ -42,7 +42,7 @@ public class InscripcionController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
-    @DeleteMapping("/eliminar")
+    @DeleteMapping("/inscripcion/eliminar")
     public ResponseEntity<InscripcionRespuestaDTO> cancelar(
             @RequestParam Long idUniversitario,
             @RequestParam Long idProyecto) {
@@ -51,13 +51,13 @@ public class InscripcionController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
-    @GetMapping("/inscripciones")
+    @GetMapping("/inscripcion/inscripciones")
     public List<InscripcionSinUsuarioDTO> listarInscripciones() {
         return inscripcionService.listarTodasLasInscripciones();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/reporte-participacion")
+    @GetMapping("/inscripcion/reporte-participacion")
     public List<ReporteParticipacionDTO> reporteParticipacion() {
         return inscripcionService.generarReporteParticipacion();
     }
