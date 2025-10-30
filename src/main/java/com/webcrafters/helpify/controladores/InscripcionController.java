@@ -4,6 +4,7 @@ import com.webcrafters.helpify.DTO.InscripcionRespuestaDTO;
 import com.webcrafters.helpify.DTO.InscripcionSinUsuarioDTO;
 import com.webcrafters.helpify.DTO.ReporteParticipacionDTO;
 import com.webcrafters.helpify.servicios.InscripcionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +18,11 @@ import java.util.List;
 import java.util.Map;
 
 
+@Slf4j
 @RestController
+@CrossOrigin(origins = "http://localhost:4200",
+        allowCredentials = "true",
+        exposedHeaders = "Authorization")
 @RequestMapping("/api")
 public class InscripcionController {
     @Autowired

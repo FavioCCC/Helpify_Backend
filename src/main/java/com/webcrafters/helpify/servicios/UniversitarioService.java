@@ -2,6 +2,7 @@ package com.webcrafters.helpify.servicios;
 
 import com.webcrafters.helpify.DTO.UniversitarioConUsuarioDTO;
 import com.webcrafters.helpify.DTO.UniversitarioDTO;
+import com.webcrafters.helpify.repositorios.InscripcionRepositorio;
 import com.webcrafters.helpify.seguridad.DTO.UsuarioSoloConDatosDTO;
 import com.webcrafters.helpify.entidades.Universitario;
 import com.webcrafters.helpify.seguridad.entidades.Usuario;
@@ -12,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +27,14 @@ UniversitarioService implements IUniversitarioService {
     private UsuarioRepositorio usuarioRepositorio;
 
     @Autowired
+    private InscripcionRepositorio inscripcionRepositorio;
+
+    @Autowired
     private ModelMapper modelMapper;
+    public UniversitarioService(UniversitarioRepositorio universitarioRepositorio, InscripcionRepositorio inscripcionRepositorio) {
+        this.universitarioRepositorio = universitarioRepositorio;
+        this.inscripcionRepositorio = inscripcionRepositorio;
+    }
 
     @Override
     public UniversitarioDTO insertarUniversitario(UniversitarioDTO universitarioDTO){
@@ -70,11 +79,20 @@ UniversitarioService implements IUniversitarioService {
 
     @Override
     public void eliminarUniversitario(Long id) {
+
         if (!universitarioRepositorio.existsById(id)) {
             throw new RuntimeException("Universitario no encontrado con ID: " + id);
         }
-        universitarioRepositorio.deleteById(id);
 
+        LocalDate hoy = LocalDate.now();
+
+        boolean estaEnProyectoActivo = inscripcionRepositorio.existsActiveProjectInscription(id, hoy);
+
+        if (estaEnProyectoActivo) {
+            throw new RuntimeException("No se puede eliminar el perfil. El universitario está inscrito en un proyecto activo con fecha de inicio y fin que incluye la fecha actual (" + hoy + ").");
+        }
+
+        universitarioRepositorio.deleteById(id);
     }
 
     @Override
