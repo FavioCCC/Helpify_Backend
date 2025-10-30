@@ -51,8 +51,11 @@ public class ProyectoDTO {
     @NotNull(message = "El cupo maximo no puede estar vacío")
     private int cupoMaximo;
 
+    private String imagen;
+
     private List<ComentarioSinProyectoyUsuarioDTO> comentarios = new ArrayList<>();
 
     private List<DonacionSinUsuarioyProyectoDTO> donaciones = new ArrayList<>();
+
     private List<NotificacionSinProyectoyUsuarioDTO> notificaciones = new ArrayList<>();
 }
