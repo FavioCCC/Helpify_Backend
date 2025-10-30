@@ -47,7 +47,10 @@ public class ProyectoConComentariosDTO {
 
     @NotBlank(message = "El nombre de la escuela beneficiada no puede estar vacío")
     private String escuelabeneficiada;
+
     private int cupoMaximo;
+
+    private String imagen;
 
     private List<ComentarioSoloDatosDTO> comentarios = new ArrayList<>();
 }

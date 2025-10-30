@@ -50,5 +50,7 @@ public class ProyectoConDonacionesDTO {
 
     private int cupoMaximo;
 
+    private String imagen;
+
     private List<DonacionSoloDatosDTO> donaciones = new ArrayList<>();
 }

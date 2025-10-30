@@ -50,6 +50,9 @@ public class Proyecto {
     @Column(name = "cupoMaximo")
     private Integer cupoMaximo;
 
+    @Column(name = "imagen", columnDefinition = "TEXT", nullable = false)
+    private String imagen;
+
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("proyecto-comentario")
     private List<Comentario> comentarios = new ArrayList<>();
