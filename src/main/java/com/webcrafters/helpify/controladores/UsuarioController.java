@@ -1,5 +1,6 @@
 package com.webcrafters.helpify.controladores;
 
+import com.webcrafters.helpify.DTO.RegistroDonanteRespuestaDTO;
 import com.webcrafters.helpify.seguridad.DTO.UsuarioConComentariosDTO;
 import com.webcrafters.helpify.seguridad.DTO.UsuarioConDonacionesDTO;
 import com.webcrafters.helpify.seguridad.DTO.UsuarioDTO;
@@ -24,9 +25,14 @@ public class UsuarioController {
     private IUsuarioService usuarioService;
 
     @PostMapping("/usuario")
-    public ResponseEntity<UsuarioDTO> insertarUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<RegistroDonanteRespuestaDTO> insertarUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO) {
         log.info("Registrando usuario {}", usuarioDTO.getNombre());
-        return ResponseEntity.ok(usuarioService.insertar(usuarioDTO));
+        RegistroDonanteRespuestaDTO resp = usuarioService.insertar(usuarioDTO);
+        if (resp.isSuccess()) {
+            return ResponseEntity.status(201).body(resp);
+        } else {
+            return ResponseEntity.badRequest().body(resp);
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
