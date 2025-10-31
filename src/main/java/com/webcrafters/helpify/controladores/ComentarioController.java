@@ -37,53 +37,54 @@ public class ComentarioController {
 
     // Crear comentario
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @PostMapping("/comentario/proyecto/{proyectoId}")
-    public ComentarioDTO insertarComentario(@RequestBody ComentarioDTO comentarioDTO,
-                                            @PathVariable Long proyectoId) {
+    @PostMapping("/comentario")
+    public ResponseEntity<ComentarioDTO> insertarComentario(@RequestBody ComentarioDTO comentarioDTO) {
         Usuario usuario = obtenerUsuarioAutenticado();
-        return comentarioService.insertarComentario(comentarioDTO, usuario.getIdusuario(), proyectoId);
+        ComentarioDTO creado = comentarioService.insertarComentario(comentarioDTO, usuario.getIdusuario());
+        return ResponseEntity.ok(creado);
     }
 
     // Actualizar comentario
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @PutMapping("/comentario/proyecto/{proyectoId}")
-    public ResponseEntity<ComentarioDTO> actualizarComentario(
-            @RequestBody ComentarioDTO comentarioDTO,
-            @PathVariable Long proyectoId) {
+    @PutMapping("/comentarionuevo")
+    public ResponseEntity<ComentarioDTO> actualizarComentario(@RequestBody ComentarioDTO comentarioDTO) {
         if (comentarioDTO.getIdcomentario() == null) {
             throw new IllegalArgumentException("El id del comentario debe estar presente en el JSON para actualizar");
         }
         Usuario usuario = obtenerUsuarioAutenticado();
-        return ResponseEntity.ok(comentarioService.actualizarComentario(comentarioDTO, usuario.getIdusuario(), proyectoId));
+        ComentarioDTO actualizado = comentarioService.actualizarComentario(comentarioDTO, usuario.getIdusuario());
+        return ResponseEntity.ok(actualizado);
     }
 
 
     // Eliminar comentario
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @DeleteMapping("/comentario/proyecto/{proyectoId}")
-    public void eliminarComentario(@RequestBody ComentarioDTO comentarioDTO,
-                                   @PathVariable Long proyectoId) {
-        if (comentarioDTO.getIdcomentario() == null) {
-            throw new IllegalArgumentException("El id del comentario debe estar presente en el JSON para eliminar");
-        }
+    @DeleteMapping("/comentario/{id}")
+    public ResponseEntity<Void> eliminarComentario(@PathVariable Long id) {
         Usuario usuario = obtenerUsuarioAutenticado();
-        comentarioService.eliminarComentario(comentarioDTO.getIdcomentario(), usuario.getIdusuario(), proyectoId);
+        comentarioService.eliminarComentario(id, usuario.getIdusuario());
+        return ResponseEntity.noContent().build();
     }
 
-    // Listar comentarios por proyecto y usuario
+    // Listar comentarios por usuario
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
-    @GetMapping("/comentario/proyecto/{proyectoId}")
-    public List<ComentarioSinProyectoyUsuarioDTO> listarPorProyectoYUsuario(@PathVariable Long proyectoId) {
+    @GetMapping("/comentario/usuario")
+    public ResponseEntity<List<ComentarioSinProyectoyUsuarioDTO>> listarPorUsuario() {
         Usuario usuario = obtenerUsuarioAutenticado();
-        return comentarioService.listarComentarioPorProyectoyUsuario(proyectoId, usuario.getIdusuario());
+        List<ComentarioSinProyectoyUsuarioDTO> lista = comentarioService.listarComentarioPorUsuario(usuario.getIdusuario());
+        return ResponseEntity.ok(lista);
     }
-
-
 
     // Buscar comentarios por calificación
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @GetMapping("/comentario/calificacion/{estrella}")
     public List<ComentarioSinProyectoyUsuarioDTO> buscarPorCalificacion(@PathVariable double estrella) {
         return comentarioService.buscarPorCalificacion(estrella);
+    }
+
+    @GetMapping("/comentarios")
+    public ResponseEntity<List<ComentarioSinProyectoyUsuarioDTO>> listarTodos() {
+        List<ComentarioSinProyectoyUsuarioDTO> lista = comentarioService.listarTodosComentarios();
+        return ResponseEntity.ok(lista);
     }
 }

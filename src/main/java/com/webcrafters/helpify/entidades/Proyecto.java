@@ -54,10 +54,6 @@ public class Proyecto {
     private String imagen;
 
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference("proyecto-comentario")
-    private List<Comentario> comentarios = new ArrayList<>();
-
-    @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("proyecto-donacion")
     private List<Donacion> donaciones = new ArrayList<>();
 

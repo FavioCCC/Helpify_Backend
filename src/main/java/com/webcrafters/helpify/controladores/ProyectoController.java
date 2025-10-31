@@ -43,13 +43,6 @@ public class ProyectoController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/proyectos/comentarios")
-    public List<ProyectoConComentariosDTO> listarProyectosConComentarios(){
-        log.info("Lista de proyectos");
-        return proyectoService.listarProyectosConComentarios();
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/proyectos/donaciones")
     public List<ProyectoConDonacionesDTO> listarProyectosConDonaciones(){
         log.info("Lista de proyectos");

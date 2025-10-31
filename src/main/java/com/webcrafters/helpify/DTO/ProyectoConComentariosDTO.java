@@ -51,6 +51,4 @@ public class ProyectoConComentariosDTO {
     private int cupoMaximo;
 
     private String imagen;
-
-    private List<ComentarioSoloDatosDTO> comentarios = new ArrayList<>();
 }

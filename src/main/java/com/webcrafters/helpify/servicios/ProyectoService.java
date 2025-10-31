@@ -111,21 +111,6 @@ public class ProyectoService implements IProyectoService {
     }
 
     @Override
-    public List<ProyectoConComentariosDTO> listarProyectosConComentarios() {
-        return proyectoRepositorio.findAll().stream()
-                .map(proyecto -> {
-                    ProyectoConComentariosDTO dto = modelMapper.map(proyecto, ProyectoConComentariosDTO.class);
-                    dto.setComentarios(
-                            proyecto.getComentarios().stream()
-                                    .map(c -> modelMapper.map(c, ComentarioSoloDatosDTO.class))
-                                    .collect(Collectors.toList())
-                    );
-                    return dto;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<ProyectoConDonacionesDTO> listarProyectosConDonaciones() {
         return proyectoRepositorio.findAll().stream()
                 .map(proyecto -> {
