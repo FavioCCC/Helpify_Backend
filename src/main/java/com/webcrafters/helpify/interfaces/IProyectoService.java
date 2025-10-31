@@ -12,7 +12,6 @@ public interface IProyectoService {
     public ProyectoDTO actualizarProyecto(ProyectoDTO proyectoDTO);
     public void eliminarProyecto(Long id);
     public List<ProyectoSoloConDatosDTO> listarTodosLosProyectos();
-    public List<ProyectoConComentariosDTO> listarProyectosConComentarios();
     public List<ProyectoConDonacionesDTO> listarProyectosConDonaciones();
 
     public CompletableFuture<List<ProyectoSoloConDatosDTO>> listarTodosLosProyectosAsync();

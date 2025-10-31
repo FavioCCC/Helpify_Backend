@@ -23,7 +23,5 @@ public class ComentarioDTO {
     @NotNull(message = "El puntaje en estrellas del proyecto no puede estar vacío")
     private double estrella;
 
-    private ProyectoSoloConDatosDTO proyecto;
-
     private UsuarioSoloConDatosDTO usuario;
 }

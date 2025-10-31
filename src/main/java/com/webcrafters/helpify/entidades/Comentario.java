@@ -26,11 +26,6 @@ public class Comentario {
     @Column(name = "estrella", nullable = false)
     private double estrella;
 
-    @ManyToOne
-    @JoinColumn(name = "idproyecto")
-    @JsonBackReference("proyecto-comentario")
-    private Proyecto proyecto;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idusuario", nullable = false)
     @JsonBackReference("usuario-comentario")
