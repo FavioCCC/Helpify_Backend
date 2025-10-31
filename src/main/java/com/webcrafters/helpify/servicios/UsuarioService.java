@@ -15,6 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,25 +35,46 @@ public class UsuarioService implements IUsuarioService {
 
 
     @Override
-    public UsuarioDTO insertar(UsuarioDTO usuarioDTO) {
-        Usuario usuarioEntidad = modelMapper.map(usuarioDTO, Usuario.class);
-
-        // Encriptar la contraseña antes de guardar
-        usuarioEntidad.setPassword(passwordEncoder.encode(usuarioDTO.getPassword()));
-
-        if (usuarioDTO.getIdRol() != null) {
-            Rol rol = rolRepositorio.findById(usuarioDTO.getIdRol())
-                    .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + usuarioDTO.getIdRol()));
-            usuarioEntidad.setRol(rol);
+    public RegistroDonanteRespuestaDTO insertar(UsuarioDTO usuarioDTO) {
+        // Validaciones básicas usando nombres del DTO
+        if (usuarioDTO == null
+                || isBlank(usuarioDTO.getNumerodocumento())
+                || isBlank(usuarioDTO.getNombredocumento())
+                || isBlank(usuarioDTO.getNombre())
+                || isBlank(usuarioDTO.getApellidopaterno())
+                || isBlank(usuarioDTO.getApellidomaterno())
+                || isBlank(usuarioDTO.getCorreo())
+                || isBlank(usuarioDTO.getPassword())
+                || usuarioDTO.getIdRol() == null) {
+            return new RegistroDonanteRespuestaDTO(false, "Complete todos los campos requeridos.", null);
         }
+
+        // Duplicados
+        if (usuarioRepositorio.existsByCorreo(usuarioDTO.getCorreo())
+                || usuarioRepositorio.existsByNumerodocumento(usuarioDTO.getNumerodocumento())) {
+            return new RegistroDonanteRespuestaDTO(false, "El usuario ya se encuentra registrado.", null);
+        }
+
+        // Mapear y guardar
+        Usuario usuarioEntidad = modelMapper.map(usuarioDTO, Usuario.class);
+        usuarioEntidad.setPassword(passwordEncoder.encode(usuarioDTO.getPassword()));
+        usuarioEntidad.setFecharegistro(LocalDateTime.now());
+
+        Rol rol = rolRepositorio.findById(usuarioDTO.getIdRol())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + usuarioDTO.getIdRol()));
+        usuarioEntidad.setRol(rol);
 
         Usuario guardado = usuarioRepositorio.save(usuarioEntidad);
         UsuarioDTO dtoSalida = modelMapper.map(guardado, UsuarioDTO.class);
         if (guardado.getRol() != null) {
             dtoSalida.setIdRol(guardado.getRol().getIdrol());
         }
-        return dtoSalida;
+
+        return new RegistroDonanteRespuestaDTO(true, "Cuenta creada exitosamente.", dtoSalida);
     }
+
+    private boolean isBlank(String s) { return s == null || s.trim().isEmpty(); }
+
 
     @Override
     public Long obtenerIdPorUsername(String username) {
