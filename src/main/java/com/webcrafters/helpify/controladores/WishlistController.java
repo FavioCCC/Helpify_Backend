@@ -54,7 +54,7 @@ public class WishlistController {
     }
 
     @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
-    @GetMapping
+    @GetMapping("/wishlist")
     public List<ProyectoSoloConDatosDTO> obtenerWishlist() {
         Usuario usuario = obtenerUsuarioAutenticado();
         return wishlistService.obtenerWishlist(usuario.getIdusuario());
