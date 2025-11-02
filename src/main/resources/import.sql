@@ -17,3 +17,5 @@ INSERT INTO proyectos (nombreproyecto, descripcion, montoobjetivo, montorecaudad
 
 INSERT INTO proyectos (nombreproyecto, descripcion, montoobjetivo, montorecaudado, fechainicio, fechafin, nombreorganización, escuelabeneficiada, cupoMaximo, imagen) VALUES ('Programa de Becas', 'Fondo para becas escolares y materiales didácticos.', 20000.00, 5600.75, '2025-01-20', '2026-01-20', 'Manos Solidarias', 'Varias escuelas municipales', 20, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0lCeNJQ5XkmbVzj0HZdBJyYG5kNvydtaiPA&s');
 
+INSERT INTO comentario (comentario, estrella, idusuario) VALUES ('Excelente iniciativa, me encantó apoyar.', 4.5, (SELECT idusuario FROM usuario WHERE correo = 'marco@email.com'));
+
