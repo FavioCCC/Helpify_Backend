@@ -70,25 +70,25 @@ public class ProyectoController {
         return ResponseEntity.ok().headers(headers).body("El proyecto ha sido eliminado correctamente.");
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
+    // Búsquedas específicas
     @GetMapping("/buscar/nombre")
     public List<ProyectoSoloConDatosDTO> buscarPorNombre(@RequestParam String nombre) {
         return proyectoService.buscarPorNombreProyecto(nombre);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
+    // Búsquedas específicas
     @GetMapping("/buscar/monto")
     public List<ProyectoSoloConDatosDTO> buscarPorMonto(@RequestParam double monto) {
         return proyectoService.buscarPorMontoObjetivo(monto);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
+    // Búsquedas específicas
     @GetMapping("/buscar/fechas")
     public List<ProyectoSoloConDatosDTO> buscarPorFechas(@RequestParam LocalDate inicio, @RequestParam LocalDate fin) {
         return proyectoService.buscarPorFechaInicioEntreFechaFin(inicio, fin);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
+    // Búsquedas específicas
     @GetMapping("/buscar/anio-mes")
     public List<ProyectoSoloConDatosDTO> buscarPorAnioYMes(@RequestParam int anio, @RequestParam int mes) {
         return proyectoService.buscarPorAnioYMes(anio, mes);
