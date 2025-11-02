@@ -55,3 +55,69 @@
 2025-11-02 00:14:25 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-11-02 00:14:25 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2025-11-02 00:14:25 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-11-02 00:37:20 INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+2025-11-02 00:37:20 INFO  c.w.helpify.HelpifyApplication - Starting HelpifyApplication using Java 17.0.15 with PID 13136 (C:\Users\elorr\OneDrive\Documentos\TRABAJO FINAL ARQUI WEB\Helpify_Backend\target\classes started by elorr in C:\Users\elorr\OneDrive\Documentos\TRABAJO FINAL ARQUI WEB\Helpify_Backend)
+2025-11-02 00:37:20 INFO  c.w.helpify.HelpifyApplication - No active profile set, falling back to 1 default profile: "default"
+2025-11-02 00:37:20 INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-11-02 00:37:20 INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-11-02 00:37:20 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-11-02 00:37:20 INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 48 ms. Found 10 JPA repository interfaces.
+2025-11-02 00:37:21 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-11-02 00:37:21 INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-11-02 00:37:21 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-11-02 00:37:21 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-11-02 00:37:21 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-11-02 00:37:21 INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 961 ms
+2025-11-02 00:37:21 INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-11-02 00:37:21 INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-11-02 00:37:21 INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-11-02 00:37:21 INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-11-02 00:37:21 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-11-02 00:37:21 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1f3ff39a
+2025-11-02 00:37:21 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-11-02 00:37:21 WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-11-02 00:37:21 INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.6
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-11-02 00:37:22 INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-11-02 00:37:22 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-11-02 00:37:22 INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-11-02 00:37:23 INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name detalleUsuarioService
+2025-11-02 00:37:23 WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-11-02 00:37:23 INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-11-02 00:37:23 INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-11-02 00:37:23 INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-11-02 00:37:23 INFO  c.w.helpify.HelpifyApplication - Started HelpifyApplication in 3.752 seconds (process running for 4.124)
+2025-11-02 00:37:30 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-11-02 00:37:30 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-11-02 00:37:30 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-11-02 00:37:30 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:37:37 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:37:43 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:37:44 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:37:44 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:37:44 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:37:45 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:38:00 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:38:05 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:38:11 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:38:12 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:39:15 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:39:16 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:39:16 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:41:43 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:41:46 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:41:48 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:45:43 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:45:45 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:55:50 INFO  c.w.h.c.ProyectoController - Lista de proyectos
+2025-11-02 00:56:25 INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-11-02 00:56:25 INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-11-02 00:56:25 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-11-02 00:56:25 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-11-02 00:56:25 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
