@@ -35,13 +35,17 @@ public class ComentarioController {
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             throw new BadCredentialsException("Usuario no autenticado");
         }
-        String username = authentication.getName();
-        return usuarioRepositorio.findByNombre(username)
-                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado: " + username));
+
+        String principal = authentication.getName();
+
+        return usuarioRepositorio.findByNombre(principal)
+                .or(() -> usuarioRepositorio.findByCorreo(principal))
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado: " + principal));
     }
 
+
     // Crear comentario
-    @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @PostMapping("/comentario")
     public ResponseEntity<ComentarioDTO> insertarComentario(@RequestBody ComentarioDTO comentarioDTO) {
         Usuario usuario = obtenerUsuarioAutenticado();
@@ -50,7 +54,7 @@ public class ComentarioController {
     }
 
     // Actualizar comentario
-    @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @PutMapping("/comentarionuevo")
     public ResponseEntity<ComentarioDTO> actualizarComentario(@RequestBody ComentarioDTO comentarioDTO) {
         if (comentarioDTO.getIdcomentario() == null) {
@@ -63,7 +67,7 @@ public class ComentarioController {
 
 
     // Eliminar comentario
-    @PreAuthorize("hasAnyRole('VOLUNTARIO', 'DONANTE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @DeleteMapping("/comentario/{id}")
     public ResponseEntity<Void> eliminarComentario(@PathVariable Long id) {
         Usuario usuario = obtenerUsuarioAutenticado();
