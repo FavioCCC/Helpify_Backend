@@ -41,8 +41,8 @@ public class Proyecto {
     @Column(name = "fechafin", nullable = false)
     private LocalDate fechafin;
 
-    @Column(name = "\"nombreorganización\"", length = Integer.MAX_VALUE)
-    private String nombreorganización;
+    @Column(name = "nombreorganizacion", length = Integer.MAX_VALUE)
+    private String nombreorganizacion;
 
     @Column(name = "escuelabeneficiada", length = Integer.MAX_VALUE)
     private String escuelabeneficiada;

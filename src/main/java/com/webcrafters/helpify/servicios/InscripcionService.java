@@ -95,7 +95,7 @@ public class InscripcionService {
             dto.setMontorecaudado(proyecto.getMontorecaudado());
             dto.setFechainicio(proyecto.getFechainicio());
             dto.setFechafin(proyecto.getFechafin());
-            dto.setNombreorganización(proyecto.getNombreorganización());
+            dto.setNombreorganizacion(proyecto.getNombreorganizacion());
             dto.setEscuelabeneficiada(proyecto.getEscuelabeneficiada());
             dto.setCupoMaximo(proyecto.getCupoMaximo());
             List<String> universitarios = inscripcionRepositorio.findAll().stream()
