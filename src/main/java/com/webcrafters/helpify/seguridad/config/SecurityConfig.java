@@ -50,19 +50,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-
                 .csrf(csrf -> csrf.disable())
-
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/autenticar",
-                                "/api/usuario",
+                        .requestMatchers(
                                 "/api/proyectos",
+                                "/api/proyectos/**",
+                                "/api/buscar/**",
+                                "/api/autenticar",
+                                "/api/usuario",
                                 "/api/comentarios",
                                 "/api/comentario/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );

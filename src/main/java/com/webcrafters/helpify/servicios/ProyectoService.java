@@ -8,6 +8,7 @@ import com.webcrafters.helpify.repositorios.DonacionRepositorio;
 import com.webcrafters.helpify.repositorios.ProyectoRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -164,7 +166,7 @@ public class ProyectoService implements IProyectoService {
     public List<ProyectoSoloConDatosDTO> buscarPorAnioYMes(int anio, int mes) {
         return proyectoRepositorio.findAll().stream()
                 .filter(proyecto -> proyecto.getFechainicio().getYear() == anio
-                        && proyecto.getFechafin().getMonthValue() == mes)
+                        && proyecto.getFechainicio().getMonthValue() == mes) // <- antes usabas getFechafin()
                 .map(proyecto -> modelMapper.map(proyecto, ProyectoSoloConDatosDTO.class))
                 .collect(Collectors.toList());
     }
@@ -183,5 +185,15 @@ public class ProyectoService implements IProyectoService {
     public List<PorcentajeUniversitariosDTO> obtenerPorcentajeUniversitariosPorProyecto(long total) {
         return proyectoRepositorio.obtenerPorcentajeUniversitariosPorProyecto(total);
     }
+
+    @Override
+    public ProyectoSoloConDatosDTO obtenerProyectoPorId(Long id) {
+        Proyecto entidad = proyectoRepositorio.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Proyecto no encontrado"));
+
+        // usa ModelMapper como ya lo tienes
+        return modelMapper.map(entidad, ProyectoSoloConDatosDTO.class);
+    }
+
 }
 

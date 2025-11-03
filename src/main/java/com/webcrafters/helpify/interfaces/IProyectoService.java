@@ -23,6 +23,7 @@ public interface IProyectoService {
     List<UniversitariosPorProyectoDTO> obtenerUniversitariosPorProyecto();
 
     long obtenerTotalUniversitarios();
+    ProyectoSoloConDatosDTO obtenerProyectoPorId(Long id);
 
     List<PorcentajeUniversitariosDTO> obtenerPorcentajeUniversitariosPorProyecto(@Param("total") long total);
 }

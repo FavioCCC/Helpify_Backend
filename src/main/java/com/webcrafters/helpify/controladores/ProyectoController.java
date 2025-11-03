@@ -106,5 +106,12 @@ public class ProyectoController {
         long total = proyectoService.obtenerTotalUniversitarios();
         return proyectoService.obtenerPorcentajeUniversitariosPorProyecto(total);
     }
+
+    @GetMapping("/proyectos/{id}")
+    public ResponseEntity<ProyectoSoloConDatosDTO> obtenerProyectoPorId(@PathVariable Long id) {
+        ProyectoSoloConDatosDTO dto = proyectoService.obtenerProyectoPorId(id);
+        return ResponseEntity.ok(dto);
+    }
+
 }
 
