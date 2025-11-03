@@ -75,6 +75,20 @@ public class UsuarioController {
         usuarioService.eliminar(id);
     }
 
+    // UsuarioController.java
+    @PreAuthorize("hasAnyRole('ADMIN','VOLUNTARIO','DONANTE')")
+    @GetMapping("/usuario/me")
+    public ResponseEntity<UsuarioDTO> miPerfil(java.security.Principal principal) {
+        // username que vino autenticado (jwt)
+        final String username = principal.getName();
+
+        // usa tu método ya existente
+        Long id = usuarioService.obtenerIdPorUsername(username);
+        UsuarioDTO dto = usuarioService.buscarPorId(id);
+
+        return ResponseEntity.ok(dto);
+    }
+
 }
 
 
