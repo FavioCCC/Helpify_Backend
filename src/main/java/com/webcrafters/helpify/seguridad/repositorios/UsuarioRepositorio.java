@@ -10,5 +10,7 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
     // Detección de duplicados usando los nombres de campos del DTO (correo, numerodocumento)
     boolean existsByCorreo(String correo);
     boolean existsByNumerodocumento(String numerodocumento);
+    Optional<Usuario> findByCorreo(String correo);
+
 }
 
