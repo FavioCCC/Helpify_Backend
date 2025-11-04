@@ -18,13 +18,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Table(name = "pago")
 public class PagoDTO {
-    @NotNull(message = "El idPago es obligatorio")
+
     private Long idPago;
 
     @NotNull(message = "El monto es obligatorio")
     private BigDecimal monto;
 
-    @NotNull(message = "La fecha de pago es obligatoria")
+
     private LocalDate fechapago;
 
     @NotBlank(message = "El número de tarjeta es obligatorio")
