@@ -36,6 +36,7 @@ public class InscripcionController {
         return authentication.getName();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
     @PostMapping("/inscripcion/{proyectoId}")
     public ResponseEntity<?> inscribirEnProyecto(@PathVariable Long proyectoId) {
         String username = obtenerUsuarioAutenticado();

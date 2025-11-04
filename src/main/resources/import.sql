@@ -34,5 +34,6 @@ INSERT INTO comentario (comentario, estrella, idusuario) VALUES ('Excelente inic
 //Donacion
 
 //Universitarios
+INSERT INTO universitario (codigoestudiante, idusuario) VALUES ('U2025001', 2);
 
 //Wishlist

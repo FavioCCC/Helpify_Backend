@@ -13,10 +13,12 @@ import com.webcrafters.helpify.seguridad.entidades.Usuario;
 import com.webcrafters.helpify.seguridad.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,24 +39,30 @@ public class InscripcionService {
     @Transactional
     public void inscribirEnProyecto(Long proyectoId, String username) {
         Usuario usuario = usuarioRepositorio.findByNombre(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario autenticado no encontrado: " + username));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Usuario no autenticado")); // 401 real
 
+        // 👇 Si no tiene ficha Universitario → 403 (NO BadCredentialsException)
         Universitario universitario = universitarioRepositorio.findByUsuarioIdusuario(usuario.getIdusuario())
-                .orElseThrow(() -> new BadCredentialsException("El usuario autenticado no tiene perfil Universitario"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.FORBIDDEN, "Debes registrarte como Universitario para inscribirte"));
 
+        // 👇 Si el proyecto no existe → 404
         Proyecto proyecto = proyectoRepositorio.findById(proyectoId)
-                .orElseThrow(() -> new IllegalArgumentException("Proyecto no encontrado: " + proyectoId));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Proyecto no encontrado: " + proyectoId));
 
+        // 👇 Si ya existe inscripción → 409
         boolean existe = inscripcionRepositorio.existsByUniversitarioAndProyecto(universitario, proyecto);
         if (existe) {
-            throw new IllegalStateException("El universitario ya está inscrito en este proyecto");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT, "Ya estás inscrito en este proyecto");
         }
 
         Inscripcion inscripcion = new Inscripcion();
         inscripcion.setUniversitario(universitario);
         inscripcion.setProyecto(proyecto);
         inscripcion.setFecharegistro(LocalDateTime.now());
-
         inscripcionRepositorio.save(inscripcion);
     }
 
