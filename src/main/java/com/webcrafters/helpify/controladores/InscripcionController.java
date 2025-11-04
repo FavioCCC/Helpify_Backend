@@ -55,7 +55,7 @@ public class InscripcionController {
         return ResponseEntity.ok(respuesta);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
+
     @GetMapping("/inscripcion/inscripciones")
     public List<InscripcionSinUsuarioDTO> listarInscripciones() {
         return inscripcionService.listarTodasLasInscripciones();
