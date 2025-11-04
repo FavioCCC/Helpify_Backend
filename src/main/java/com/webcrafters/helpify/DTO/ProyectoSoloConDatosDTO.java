@@ -41,7 +41,7 @@ public class ProyectoSoloConDatosDTO {
     private LocalDate fechafin;
 
     @NotBlank(message = "El nombre de la organización no puede estar vacío")
-    private String nombreorganización;
+    private String nombreorganizacion;
 
     @NotBlank(message = "El nombre de la escuela beneficiada no puede estar vacío")
     private String escuelabeneficiada;
