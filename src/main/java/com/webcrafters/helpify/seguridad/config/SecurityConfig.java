@@ -59,7 +59,8 @@ public class SecurityConfig {
                                 "/api/autenticar",
                                 "/api/usuario",
                                 "/api/comentarios",
-                                "/api/comentario/**"
+                                "/api/comentario/**",
+                                "/inscripcion/inscripciones"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
