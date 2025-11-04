@@ -87,7 +87,7 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioDTO actualizar(UsuarioDTO usuarioDTO) {
         return usuarioRepositorio.findById(usuarioDTO.getIdusuario())
                 .map(existing -> {
-                    // 🔹 Solo actualizamos los campos editables
+                    // Solo actualizamos los campos editables
                     existing.setNombre(usuarioDTO.getNombre());
                     existing.setApellidopaterno(usuarioDTO.getApellidopaterno());
                     existing.setApellidomaterno(usuarioDTO.getApellidomaterno());
@@ -96,12 +96,12 @@ public class UsuarioService implements IUsuarioService {
                     existing.setNombredocumento(usuarioDTO.getNombredocumento());
                     existing.setNumerodocumento(usuarioDTO.getNumerodocumento());
 
-                    // ⚠️ Si password viene, solo lo actualizamos si no está vacío o nulo
+                    // Si password viene, solo lo actualizamos si no está vacío o nulo
                     if (usuarioDTO.getPassword() != null && !usuarioDTO.getPassword().isBlank()) {
                         existing.setPassword(usuarioDTO.getPassword());
                     }
 
-                    // ⚠️ Si idRol viene con valor, se actualiza; si no, se conserva el actual
+                    // Si idRol viene con valor, se actualiza; si no, se conserva el actual
                     if (usuarioDTO.getIdRol() != null) {
                         Rol nuevoRol = rolRepositorio.findById(usuarioDTO.getIdRol())
                                 .orElseThrow(() -> new RuntimeException("Rol con ID " + usuarioDTO.getIdRol() + " no encontrado"));
