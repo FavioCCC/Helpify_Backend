@@ -87,12 +87,31 @@ public class UsuarioService implements IUsuarioService {
     public UsuarioDTO actualizar(UsuarioDTO usuarioDTO) {
         return usuarioRepositorio.findById(usuarioDTO.getIdusuario())
                 .map(existing -> {
-                    Usuario usuarioEntidad = modelMapper.map(usuarioDTO, Usuario.class);
-                    Usuario guardado = usuarioRepositorio.save(usuarioEntidad);
+                    // 🔹 Solo actualizamos los campos editables
+                    existing.setNombre(usuarioDTO.getNombre());
+                    existing.setApellidopaterno(usuarioDTO.getApellidopaterno());
+                    existing.setApellidomaterno(usuarioDTO.getApellidomaterno());
+                    existing.setCorreo(usuarioDTO.getCorreo());
+                    existing.setCelular(usuarioDTO.getCelular());
+                    existing.setNombredocumento(usuarioDTO.getNombredocumento());
+                    existing.setNumerodocumento(usuarioDTO.getNumerodocumento());
+
+                    // ⚠️ Si password viene, solo lo actualizamos si no está vacío o nulo
+                    if (usuarioDTO.getPassword() != null && !usuarioDTO.getPassword().isBlank()) {
+                        existing.setPassword(usuarioDTO.getPassword());
+                    }
+
+                    // ⚠️ Si idRol viene con valor, se actualiza; si no, se conserva el actual
+                    if (usuarioDTO.getIdRol() != null) {
+                        Rol nuevoRol = rolRepositorio.findById(usuarioDTO.getIdRol())
+                                .orElseThrow(() -> new RuntimeException("Rol con ID " + usuarioDTO.getIdRol() + " no encontrado"));
+                        existing.setRol(nuevoRol);
+                    }
+
+                    Usuario guardado = usuarioRepositorio.save(existing);
                     return modelMapper.map(guardado, UsuarioDTO.class);
                 })
-                .orElseThrow(() -> new RuntimeException("Usuario con ID " + usuarioDTO.getIdusuario() +
-                        " no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario con ID " + usuarioDTO.getIdusuario() + " no encontrado"));
     }
 
     @Override
