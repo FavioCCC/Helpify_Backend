@@ -39,4 +39,14 @@ public class Donacion {
     @JoinColumn(name = "idproyecto", nullable = false) //@JsonBackReference
     @JsonBackReference("proyecto-donacion")
     private Proyecto proyecto;
+
+    @OneToOne(mappedBy = "donacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Pago pago;
+
+    public void setPago(Pago pago) {
+        this.pago = pago;
+        if (pago != null) {
+            pago.setDonacion(this);
+        }
+    }
 }

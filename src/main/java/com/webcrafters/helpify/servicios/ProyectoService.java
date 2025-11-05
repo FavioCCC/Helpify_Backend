@@ -114,14 +114,25 @@ public class ProyectoService implements IProyectoService {
 
     @Override
     public List<ProyectoConDonacionesDTO> listarProyectosConDonaciones() {
-        return proyectoRepositorio.findAll().stream()
+        return proyectoRepositorio.listarProyectosConDonaciones().stream() // 👈 usa tu @Query personalizado
                 .map(proyecto -> {
                     ProyectoConDonacionesDTO dto = modelMapper.map(proyecto, ProyectoConDonacionesDTO.class);
+
                     dto.setDonaciones(
                             proyecto.getDonaciones().stream()
-                                    .map(d -> modelMapper.map(d, DonacionSoloDatosDTO.class))
+                                    .map(d -> {
+                                        DonacionSoloDatosDTO donacionDTO = modelMapper.map(d, DonacionSoloDatosDTO.class);
+
+                                        if (d.getPago() != null) {
+                                            PagoSoloConDatosDTO pagoDTO = modelMapper.map(d.getPago(), PagoSoloConDatosDTO.class);
+                                            donacionDTO.setPago(pagoDTO);
+                                        }
+
+                                        return donacionDTO;
+                                    })
                                     .collect(Collectors.toList())
                     );
+
                     return dto;
                 })
                 .collect(Collectors.toList());

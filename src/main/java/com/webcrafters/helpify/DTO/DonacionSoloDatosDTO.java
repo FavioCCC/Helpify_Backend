@@ -16,4 +16,6 @@ public class DonacionSoloDatosDTO {
     private Long id;
     private LocalDate fechadonacion;
     private String estado;
+
+    private PagoSoloConDatosDTO pago;
 }
