@@ -31,7 +31,24 @@ INSERT INTO comentario (comentario, estrella, idusuario) VALUES ('Excelente inic
 
 //Inscripcion
 
-//Donacion
+/*Donacion*/
+INSERT INTO donacion (fechadonacion, estado, idusuario, idproyecto) VALUES ('2025-05-10', 'COMPLETADO', 3, 1);
+
+INSERT INTO donacion (fechadonacion, estado, idusuario, idproyecto) VALUES ('2025-04-20', 'PENDIENTE', 3, 2);
+
+INSERT INTO donacion (fechadonacion, estado, idusuario, idproyecto) VALUES ('2025-03-05', 'COMPLETADO', 3, 3);
+
+INSERT INTO donacion (fechadonacion, estado, idusuario, idproyecto) VALUES ('2025-06-01', 'PENDIENTE', 3, 4);
+
+
+/* Pago*/
+INSERT INTO pago (monto, fechapago, numerotarjeta, nombretitular, fechaexpiracion, cvv, id_donacion) VALUES (50.00, '2025-05-10', '4111111111111111', 'Majo', '2027-12-31', '123', 1);
+
+INSERT INTO pago (monto, fechapago, numerotarjeta, nombretitular, fechaexpiracion, cvv, id_donacion) VALUES (100.00, '2025-04-20', '4242424242424242', 'Majo', '2026-11-30', '456', 2);
+
+INSERT INTO pago (monto, fechapago, numerotarjeta, nombretitular, fechaexpiracion, cvv, id_donacion) VALUES (25.50, '2025-03-05', '4012888888881881', 'Majo', '2026-06-30', '789', 3);
+
+INSERT INTO pago (monto, fechapago, numerotarjeta, nombretitular, fechaexpiracion, cvv, id_donacion) VALUES (75.75, '2025-06-01', '378282246310005', 'Majo', '2028-01-31', '321', 4);
 
 //Universitarios
 INSERT INTO universitario (codigoestudiante, idusuario) VALUES ('U2025001', 2);
