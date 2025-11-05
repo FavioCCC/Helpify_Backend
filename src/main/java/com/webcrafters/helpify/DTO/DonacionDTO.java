@@ -20,6 +20,5 @@ public class DonacionDTO {
 
     private UsuarioSoloConDatosDTO usuario;
     private ProyectoSoloConDatosDTO proyecto;
-
-
+    private PagoSoloConDatosDTO pago;
 }
