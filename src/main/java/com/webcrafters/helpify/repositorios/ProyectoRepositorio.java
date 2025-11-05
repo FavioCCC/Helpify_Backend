@@ -25,6 +25,11 @@ public interface ProyectoRepositorio extends JpaRepository<Proyecto, Long> {
     @Query("SELECT COUNT(u) FROM Universitario u")
     long obtenerTotalUniversitarios();
 
+    @Query("SELECT DISTINCT p FROM Proyecto p " +
+            "LEFT JOIN FETCH p.donaciones d " +
+            "LEFT JOIN FETCH d.pago")
+    List<Proyecto> listarProyectosConDonaciones();
+
     @Query("SELECT new com.webcrafters.helpify.DTO.PorcentajeUniversitariosDTO(p.nombreproyecto, " +
             "(COUNT(i.universitario) * 1.0 / :total) * 100) " +
             "FROM Proyecto p JOIN Inscripcion i ON i.proyecto = p GROUP BY p.nombreproyecto")
