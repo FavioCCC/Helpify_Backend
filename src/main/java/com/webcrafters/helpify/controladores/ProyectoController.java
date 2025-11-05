@@ -42,7 +42,7 @@ public class ProyectoController {
         return proyectoService.listarTodosLosProyectos();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONANTE')")
     @GetMapping("/proyectos/donaciones")
     public List<ProyectoConDonacionesDTO> listarProyectosConDonaciones(){
         log.info("Lista de proyectos");
