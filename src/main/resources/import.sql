@@ -9,8 +9,8 @@ INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, 
 
 INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('12345678', 'DNI', 'Juan', 'Perez', 'Lopez', '999999999', 'juan@email.com', '$2a$12$fwy1GDh.YYwYXnZXa4gIfuQIQuwkuY8u7e5isB/1HsykxnNaxyKa2', NOW(), 2);
 
-/*Majo 12345*/
-INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('87456321', 'DNI', 'Majo', 'Elorrieta', 'Carrion', '111111111', 'majo@email.com', '$2a$12$DvNJV8MBq2/acL/3Iu3LLeEnwd0P1COlGBUquZZH4N6ZN2Swc7frO', NOW(), 3);
+/*Majo majo12345*/
+INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('87456321', 'DNI', 'Majo', 'Elorrieta', 'Carrion', '111111111', 'majo@email.com', '$2a$12$c/qVM.HTUva77Ku1Nic0g.BquWGyngxooSEq5nmrInlTByLSSQX.G', NOW(), 3);
 
 
 /*Proyectos*/
