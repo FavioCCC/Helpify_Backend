@@ -33,7 +33,7 @@ public class UniversitarioController {
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
-    @PreAuthorize("hasRole('VOLUNTARIO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
     @PostMapping("/universitario")
     public ResponseEntity<UniversitarioDTO> insertarUniversitario(@Valid @RequestBody UniversitarioDTO universitarioDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -59,13 +59,13 @@ public class UniversitarioController {
         return ResponseEntity.ok(universitarioService.buscarPorIdUniversitario(iduniversitario));
     }
 
-    @PreAuthorize("hasRole('VOLUNTARIO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
     @PutMapping("/universitario")
     public ResponseEntity<UniversitarioDTO> actualizarUniversitario(@RequestBody UniversitarioDTO universitarioDTO){
         return ResponseEntity.ok(universitarioService.actualizarUniversitario(universitarioDTO));
     }
 
-    @PreAuthorize("hasRole('VOLUNTARIO')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
     @DeleteMapping("/universitario/{id}")
     public void eliminarUniversitario(@PathVariable Long id)
     {
