@@ -1,5 +1,6 @@
 package com.webcrafters.helpify.DTO;
 
+import com.webcrafters.helpify.seguridad.DTO.UsuarioSoloConDatosDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,6 @@ public class DonacionSoloDatosDTO {
     private LocalDate fechadonacion;
     private String estado;
 
+    private UsuarioSoloConDatosDTO usuario;
     private PagoSoloConDatosDTO pago;
 }
