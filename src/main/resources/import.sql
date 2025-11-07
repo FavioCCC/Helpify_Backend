@@ -9,10 +9,7 @@ INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, 
 
 INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('12345678', 'DNI', 'Juan', 'Perez', 'Lopez', '999999999', 'juan@email.com', '$2a$12$fwy1GDh.YYwYXnZXa4gIfuQIQuwkuY8u7e5isB/1HsykxnNaxyKa2', NOW(), 2);
 
-/*
-usuario: Majo
-contraseña: majo12345
-*/
+/*usuario: Majo | contraseña: majo12345*/
 INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('87456321', 'DNI', 'Majo', 'Elorrieta', 'Carrion', '111111111', 'majo@email.com', '$2a$12$c/qVM.HTUva77Ku1Nic0g.BquWGyngxooSEq5nmrInlTByLSSQX.G', NOW(), 3);
 
 
@@ -30,9 +27,9 @@ INSERT INTO proyectos (nombreproyecto, descripcion, montoobjetivo, montorecaudad
 /*Comentarios*/
 INSERT INTO comentario (comentario, estrella, idusuario) VALUES ('Excelente iniciativa, me encantó apoyar.', 4.5, (SELECT idusuario FROM usuario WHERE correo = 'marco@email.com'));
 
-//Notificacion
+/*Notificacion*/
 
-//Inscripcion
+/*Inscripcion*/
 
 /*Donacion*/
 INSERT INTO donacion (fechadonacion, estado, idusuario, idproyecto) VALUES ('2025-05-10', 'COMPLETADO', 3, 1);
@@ -53,7 +50,7 @@ INSERT INTO pago (monto, fechapago, numerotarjeta, nombretitular, fechaexpiracio
 
 INSERT INTO pago (monto, fechapago, numerotarjeta, nombretitular, fechaexpiracion, cvv, id_donacion) VALUES (75.75, '2025-06-01', '378282246310005', 'Majo', '2028-01-31', '321', 4);
 
-//Universitarios
+/*Universitarios*/
 INSERT INTO universitario (codigoestudiante, idusuario) VALUES ('U2025001', 2);
 
-//Wishlist
+/*Wishlist*/
