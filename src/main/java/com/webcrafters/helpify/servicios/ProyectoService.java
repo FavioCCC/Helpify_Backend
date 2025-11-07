@@ -2,10 +2,14 @@ package com.webcrafters.helpify.servicios;
 
 import com.webcrafters.helpify.DTO.*;
 import com.webcrafters.helpify.entidades.Proyecto;
+import com.webcrafters.helpify.entidades.Universitario;
 import com.webcrafters.helpify.excepciones.GlobalExceptionHandle;
 import com.webcrafters.helpify.interfaces.IProyectoService;
 import com.webcrafters.helpify.repositorios.DonacionRepositorio;
+import com.webcrafters.helpify.repositorios.InscripcionRepositorio;
 import com.webcrafters.helpify.repositorios.ProyectoRepositorio;
+import com.webcrafters.helpify.seguridad.DTO.UsuarioSoloConDatosDTO;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +36,9 @@ public class ProyectoService implements IProyectoService {
 
     @Autowired
     private DonacionRepositorio donacionRepositorio;
+
+    @Autowired
+    private InscripcionRepositorio inscripcionRepositorio;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -114,7 +121,7 @@ public class ProyectoService implements IProyectoService {
 
     @Override
     public List<ProyectoConDonacionesDTO> listarProyectosConDonaciones() {
-        return proyectoRepositorio.listarProyectosConDonaciones().stream() // 👈 usa tu @Query personalizado
+        return proyectoRepositorio.listarProyectosConDonaciones().stream()
                 .map(proyecto -> {
                     ProyectoConDonacionesDTO dto = modelMapper.map(proyecto, ProyectoConDonacionesDTO.class);
 
@@ -136,6 +143,66 @@ public class ProyectoService implements IProyectoService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProyectoConInscripcionesDTO> listarProyectosConInscripciones() {
+        return proyectoRepositorio.findAll().stream().map(proyecto -> {
+            ProyectoConInscripcionesDTO dto = new ProyectoConInscripcionesDTO();
+
+            // --- Datos del proyecto ---
+            dto.setIdproyecto(proyecto.getIdproyecto());
+            dto.setNombreproyecto(proyecto.getNombreproyecto());
+            dto.setDescripcion(proyecto.getDescripcion());
+            dto.setMontoobjetivo(proyecto.getMontoobjetivo());
+            dto.setMontorecaudado(proyecto.getMontorecaudado());
+            dto.setFechainicio(proyecto.getFechainicio());
+            dto.setFechafin(proyecto.getFechafin());
+            dto.setNombreorganizacion(proyecto.getNombreorganizacion());
+            dto.setEscuelabeneficiada(proyecto.getEscuelabeneficiada());
+            dto.setCupoMaximo(proyecto.getCupoMaximo());
+            dto.setImagen(proyecto.getImagen());
+
+            // --- Inscripciones asociadas ---
+            List<InscripcionSoloConUniversitarioDTO> inscripciones = inscripcionRepositorio.findAll().stream()
+                    .filter(i -> i.getProyecto().getIdproyecto().equals(proyecto.getIdproyecto()))
+                    .map(i -> {
+                        Universitario u = i.getUniversitario();
+                        Usuario usuario = u.getUsuario();
+
+                        // Crear DTO de usuario
+                        UsuarioSoloConDatosDTO usuarioDTO = new UsuarioSoloConDatosDTO();
+                        usuarioDTO.setIdusuario(usuario.getIdusuario());
+                        usuarioDTO.setNumerodocumento(usuario.getNumerodocumento());
+                        usuarioDTO.setNombredocumento(usuario.getNombredocumento());
+                        usuarioDTO.setNombre(usuario.getNombre());
+                        usuarioDTO.setApellidopaterno(usuario.getApellidopaterno());
+                        usuarioDTO.setApellidomaterno(usuario.getApellidomaterno());
+                        usuarioDTO.setCelular(usuario.getCelular());
+                        usuarioDTO.setCorreo(usuario.getCorreo());
+                        usuarioDTO.setPassword(usuario.getPassword());
+                        usuarioDTO.setFecharegistro(usuario.getFecharegistro());
+
+                        // Crear DTO de universitario con usuario anidado
+                        UniversitarioConUsuarioDTO uniDTO = new UniversitarioConUsuarioDTO();
+                        uniDTO.setIduniversitario(u.getIduniversitario());
+                        uniDTO.setCodigoestudiante(u.getCodigoestudiante());
+                        uniDTO.setUsuario(usuarioDTO);
+
+                        // Crear DTO de inscripción con ID, fecha y universitario
+                        InscripcionSoloConUniversitarioDTO inscDTO = new InscripcionSoloConUniversitarioDTO();
+                        inscDTO.setId(i.getId());
+                        inscDTO.setFecharegistro(i.getFecharegistro());
+                        inscDTO.setUniversitario(uniDTO);
+
+                        return inscDTO;
+                    })
+                    .collect(Collectors.toList());
+
+            dto.setInscripciones(inscripciones);
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     @Async
