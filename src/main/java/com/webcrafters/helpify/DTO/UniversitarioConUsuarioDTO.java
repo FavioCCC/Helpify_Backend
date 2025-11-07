@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class UniversitarioConUsuarioDTO {
     private Long iduniversitario;
     private String codigoestudiante;
