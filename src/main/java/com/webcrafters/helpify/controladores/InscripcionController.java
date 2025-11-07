@@ -38,13 +38,10 @@ public class InscripcionController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
     @PostMapping("/inscripcion/{proyectoId}")
-    public ResponseEntity<?> inscribirEnProyecto(@PathVariable Long proyectoId) {
+    public ResponseEntity<InscripcionRespuestaDTO> inscribirEnProyecto(@PathVariable Long proyectoId) {
         String username = obtenerUsuarioAutenticado();
-        inscripcionService.inscribirEnProyecto(proyectoId, username);
-        return ResponseEntity.ok(Map.of(
-                "message", "Inscripción registrada con éxito",
-                "proyectoId", proyectoId
-        ));
+        InscripcionRespuestaDTO respuesta = inscripcionService.inscribirEnProyecto(proyectoId, username);
+        return ResponseEntity.ok(respuesta);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
