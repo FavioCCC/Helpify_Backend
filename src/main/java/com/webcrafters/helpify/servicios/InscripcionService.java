@@ -6,6 +6,7 @@ import com.webcrafters.helpify.DTO.ReporteParticipacionDTO;
 import com.webcrafters.helpify.entidades.Inscripcion;
 import com.webcrafters.helpify.entidades.Proyecto;
 import com.webcrafters.helpify.entidades.Universitario;
+import com.webcrafters.helpify.interfaces.IInscripcionService;
 import com.webcrafters.helpify.repositorios.InscripcionRepositorio;
 import com.webcrafters.helpify.repositorios.ProyectoRepositorio;
 import com.webcrafters.helpify.repositorios.UniversitarioRepositorio;
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class InscripcionService {
+public class InscripcionService implements IInscripcionService {
     @Autowired
     private InscripcionRepositorio inscripcionRepositorio;
     @Autowired
@@ -37,22 +38,19 @@ public class InscripcionService {
     private ModelMapper modelMapper;
 
     @Transactional
-    public void inscribirEnProyecto(Long proyectoId, String username) {
+    public InscripcionRespuestaDTO inscribirEnProyecto(Long proyectoId, String username) {
         Usuario usuario = usuarioRepositorio.findByNombre(username)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED, "Usuario no autenticado")); // 401 real
+                        HttpStatus.UNAUTHORIZED, "Usuario no autenticado"));
 
-        // 👇 Si no tiene ficha Universitario → 403 (NO BadCredentialsException)
         Universitario universitario = universitarioRepositorio.findByUsuarioIdusuario(usuario.getIdusuario())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.FORBIDDEN, "Debes registrarte como Universitario para inscribirte"));
 
-        // 👇 Si el proyecto no existe → 404
         Proyecto proyecto = proyectoRepositorio.findById(proyectoId)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Proyecto no encontrado: " + proyectoId));
 
-        // 👇 Si ya existe inscripción → 409
         boolean existe = inscripcionRepositorio.existsByUniversitarioAndProyecto(universitario, proyecto);
         if (existe) {
             throw new ResponseStatusException(
@@ -64,6 +62,8 @@ public class InscripcionService {
         inscripcion.setProyecto(proyecto);
         inscripcion.setFecharegistro(LocalDateTime.now());
         inscripcionRepositorio.save(inscripcion);
+
+        return new InscripcionRespuestaDTO(true, "Inscripción registrada con éxito");
     }
 
 
@@ -114,5 +114,21 @@ public class InscripcionService {
             return dto;
         }).toList();
     }
+
+    /*
+    public List<ReporteParticipacionDTO> generarReporteParticipacion() {
+        return proyectoRepositorio.findAll().stream().map(proyecto -> {
+            ReporteParticipacionDTO dto = modelMapper.map(proyecto, ReporteParticipacionDTO.class);
+
+            List<String> universitarios = inscripcionRepositorio.findByProyecto(proyecto).stream()
+                    .map(Inscripcion::getUniversitario)
+                    .map(Universitario::getCodigoestudiante)
+                    .toList();
+
+            dto.setUniversitarios(universitarios);
+            return dto;
+        }).toList();
+    }
+     */
 
 }

@@ -23,4 +23,6 @@ public interface InscripcionRepositorio extends JpaRepository<Inscripcion, Long>
             @Param("fechaActual") LocalDate fechaActual
     );
 
+    // Nuevo: recuperar todas las inscripciones de un proyecto
+    List<Inscripcion> findByProyecto(Proyecto proyecto);
 }
