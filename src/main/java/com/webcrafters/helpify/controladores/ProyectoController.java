@@ -49,6 +49,12 @@ public class ProyectoController {
         return proyectoService.listarProyectosConDonaciones();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO')")
+    @GetMapping("/proyectos/inscripciones")
+    public List<ProyectoConInscripcionesDTO> listarProyectosConInscripciones() {
+        return proyectoService.listarProyectosConInscripciones();
+    }
+
     @PreAuthorize("hasAnyRole('ADMIN', 'VOLUNTARIO', 'DONANTE')")
     @GetMapping("/proyectos/async")
     public CompletableFuture<List<ProyectoSoloConDatosDTO>> listarProyectosAsync() {
