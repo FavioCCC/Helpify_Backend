@@ -13,7 +13,7 @@ public interface IProyectoService {
     public void eliminarProyecto(Long id);
     public List<ProyectoSoloConDatosDTO> listarTodosLosProyectos();
     public List<ProyectoConDonacionesDTO> listarProyectosConDonaciones();
-
+    public List<ProyectoConInscripcionesDTO> listarProyectosConInscripciones();
     public CompletableFuture<List<ProyectoSoloConDatosDTO>> listarTodosLosProyectosAsync();
     public List<ProyectoSoloConDatosDTO> buscarPorNombreProyecto(String nombreProyecto);
     public List<ProyectoSoloConDatosDTO> buscarPorMontoObjetivo(double monto);
