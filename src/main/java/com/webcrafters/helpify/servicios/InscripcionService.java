@@ -51,11 +51,19 @@ public class InscripcionService implements IInscripcionService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Proyecto no encontrado: " + proyectoId));
 
+        Integer cupo = proyecto.getCupoMaximo();
+        if (cupo == null || cupo <= 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "No hay cupos disponibles en este proyecto");
+        }
+
         boolean existe = inscripcionRepositorio.existsByUniversitarioAndProyecto(universitario, proyecto);
         if (existe) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Ya estás inscrito en este proyecto");
         }
+
+        proyecto.setCupoMaximo(cupo - 1);
+        proyectoRepositorio.save(proyecto);
 
         Inscripcion inscripcion = new Inscripcion();
         inscripcion.setUniversitario(universitario);
