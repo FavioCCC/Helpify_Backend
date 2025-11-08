@@ -48,5 +48,8 @@ public class ReporteParticipacionDTO {
     @Positive(message = "El cupo máximo debe ser mayor que 0")
     private int cupoMaximo;
 
+    @Positive(message = "El cupo máximo debe ser mayor que 0")
+    private int cupoRestante;
+
     private List<String> universitarios;
 }
