@@ -51,8 +51,8 @@ public class InscripcionService implements IInscripcionService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Proyecto no encontrado: " + proyectoId));
 
-        Integer cupo = proyecto.getCupoMaximo();
-        if (cupo == null || cupo <= 0) {
+        Integer cupoRestante = proyecto.getCupoRestante();
+        if (cupoRestante == null || cupoRestante <= 0) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "No hay cupos disponibles en este proyecto");
         }
 
@@ -62,7 +62,7 @@ public class InscripcionService implements IInscripcionService {
                     HttpStatus.CONFLICT, "Ya estás inscrito en este proyecto");
         }
 
-        proyecto.setCupoMaximo(cupo - 1);
+        proyecto.setCupoRestante(cupoRestante - 1);
         proyectoRepositorio.save(proyecto);
 
         Inscripcion inscripcion = new Inscripcion();
@@ -88,12 +88,13 @@ public class InscripcionService implements IInscripcionService {
         }
         inscripcionRepositorio.delete(inscripciones.get(0));
 
-        // Aumentar cupo
-        proyecto.setCupoMaximo(proyecto.getCupoMaximo() + 1);
+        Integer restante = proyecto.getCupoRestante();
+        proyecto.setCupoRestante((restante == null ? 0 : restante) + 1);
         proyectoRepositorio.save(proyecto);
 
         return new InscripcionRespuestaDTO(true, "Inscripción eliminada correctamente");
     }
+
 
 
     public List<InscripcionSinUsuarioDTO> listarTodasLasInscripciones() {
@@ -114,6 +115,7 @@ public class InscripcionService implements IInscripcionService {
             dto.setNombreorganizacion(proyecto.getNombreorganizacion());
             dto.setEscuelabeneficiada(proyecto.getEscuelabeneficiada());
             dto.setCupoMaximo(proyecto.getCupoMaximo());
+            dto.setCupoRestante(proyecto.getCupoRestante());
             List<String> universitarios = inscripcionRepositorio.findAll().stream()
                     .filter(i -> i.getProyecto().getIdproyecto().equals(proyecto.getIdproyecto()))
                     .map(i -> i.getUniversitario().getCodigoestudiante())

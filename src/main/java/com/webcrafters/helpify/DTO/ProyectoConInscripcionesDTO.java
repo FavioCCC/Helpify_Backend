@@ -47,6 +47,7 @@ public class ProyectoConInscripcionesDTO {
     private String escuelabeneficiada;
 
     private int cupoMaximo;
+    private int cupoRestante;
 
     private String imagen;
 
