@@ -66,23 +66,19 @@ public class ProyectoService implements IProyectoService {
                 || proyectoDTO.getFechafin() == null) {
             throw new IllegalArgumentException();
         }
-
-        // Validación opcional de consistencia de fechas
         if (proyectoDTO.getFechafin().isBefore(proyectoDTO.getFechainicio())) {
             throw new IllegalArgumentException();
         }
 
-        // Si existe campo montoobjetivo y es <= 0, considerar inválido
-        try {
-            double monto = proyectoDTO.getMontoobjetivo();
-            if (monto <= 0) {
-                throw new IllegalArgumentException();
-            }
-        } catch (NullPointerException ignored) {
-            // Si el getter devuelve objeto nulo, ya fue cubierto por validación anterior opcional
+        Proyecto proyectoEntidad = modelMapper.map(proyectoDTO, Proyecto.class);
+
+        if (proyectoEntidad.getCupoMaximo() == null || proyectoEntidad.getCupoMaximo() < 0) {
+            throw new IllegalArgumentException("cupoMaximo inválido");
         }
 
-        Proyecto proyectoEntidad = modelMapper.map(proyectoDTO, Proyecto.class);
+        // Inicializar cupoRestante igual al cupoMaximo al crear
+        proyectoEntidad.setCupoRestante(proyectoEntidad.getCupoMaximo());
+
         Proyecto guardado = proyectoRepositorio.save(proyectoEntidad);
         return modelMapper.map(guardado, ProyectoSoloConDatosDTO.class);
     }
@@ -91,8 +87,21 @@ public class ProyectoService implements IProyectoService {
     public ProyectoDTO actualizarProyecto(ProyectoDTO proyectoDTO) {
         return proyectoRepositorio.findById(proyectoDTO.getIdproyecto())
                 .map(existing -> {
-                    Proyecto proyectoEntidad = modelMapper.map(proyectoDTO, Proyecto.class);
-                    Proyecto guardado = proyectoRepositorio.save(proyectoEntidad);
+                    // Copiar solo campos editables desde el DTO
+                    existing.setNombreproyecto(proyectoDTO.getNombreproyecto());
+                    existing.setDescripcion(proyectoDTO.getDescripcion());
+                    existing.setMontoobjetivo(proyectoDTO.getMontoobjetivo());
+                    existing.setMontorecaudado(proyectoDTO.getMontorecaudado());
+                    existing.setFechainicio(proyectoDTO.getFechainicio());
+                    existing.setFechafin(proyectoDTO.getFechafin());
+                    existing.setNombreorganizacion(proyectoDTO.getNombreorganizacion());
+                    existing.setEscuelabeneficiada(proyectoDTO.getEscuelabeneficiada());
+                    existing.setImagen(proyectoDTO.getImagen());
+
+                    // NO permitir cambiar cupoMaximo: conservar el existente
+                    existing.setCupoRestante(existing.getCupoMaximo());
+
+                    Proyecto guardado = proyectoRepositorio.save(existing);
                     return modelMapper.map(guardado, ProyectoDTO.class);
                 })
                 .orElseThrow(() -> new RuntimeException("Proyecto con ID " + proyectoDTO.getIdproyecto() +
@@ -161,6 +170,7 @@ public class ProyectoService implements IProyectoService {
             dto.setNombreorganizacion(proyecto.getNombreorganizacion());
             dto.setEscuelabeneficiada(proyecto.getEscuelabeneficiada());
             dto.setCupoMaximo(proyecto.getCupoMaximo());
+            dto.setCupoRestante(proyecto.getCupoRestante());
             dto.setImagen(proyecto.getImagen());
 
             // --- Inscripciones asociadas ---

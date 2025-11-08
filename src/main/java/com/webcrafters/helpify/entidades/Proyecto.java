@@ -50,6 +50,9 @@ public class Proyecto {
     @Column(name = "cupoMaximo")
     private Integer cupoMaximo;
 
+    @Column(name = "cupoRestante")
+    private Integer cupoRestante;
+
     @Column(name = "imagen", columnDefinition = "TEXT", nullable = false)
     private String imagen;
 
