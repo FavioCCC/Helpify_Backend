@@ -46,6 +46,7 @@ public class GlobalExceptionHandle {
         return new ResponseEntity<>(error, ex.getStatusCode());
     }
 
+
     @ExceptionHandler({IllegalArgumentException.class, MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorResponde> handleBadRequestExceptions(Exception ex) {
         log.error("Bad request", ex);
@@ -77,7 +78,10 @@ public class GlobalExceptionHandle {
     @ExceptionHandler({ConflictException.class, DataIntegrityViolationException.class})
     public ResponseEntity<ErrorResponde> handleConflictExceptions(Exception ex) {
         log.error("Conflict or data integrity violation", ex);
-        ErrorResponde error = new ErrorResponde(HttpStatus.CONFLICT.value(), MSG_409);
+        String msg = (ex.getMessage() != null && !ex.getMessage().isBlank())
+                ? ex.getMessage()
+                : MSG_409;
+        ErrorResponde error = new ErrorResponde(HttpStatus.CONFLICT.value(), msg);
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
