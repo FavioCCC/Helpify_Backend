@@ -28,6 +28,13 @@ INSERT INTO proyectos (nombreproyecto, descripcion, montoobjetivo, montorecaudad
 INSERT INTO comentario (comentario, estrella, idusuario) VALUES ('Excelente iniciativa, me encantó apoyar.', 4.5, (SELECT idusuario FROM usuario WHERE correo = 'marco@email.com'));
 
 /*Notificacion*/
+INSERT INTO notificacion (mensaje, tipo, fechaEnvio, leido, usuario_id) Values ('Bienvenido a la plataforma.', 'BIENVENIDA', '2025-11-01 10:00:00', FALSE, 1);
+
+INSERT INTO notificacion (mensaje, tipo, fechaEnvio, leido, usuario_id) VALUES ('Tu cuenta ha sido actualizada.', 'SISTEMA', '2025-11-05 15:30:00', FALSE, 2);
+
+INSERT INTO notificacion (mensaje, tipo, fechaEnvio, leido, usuario_id) VALUES ('Nuevo proyecto disponible para donar.', 'PROYECTO', '2025-11-10 09:15:00', FALSE, 3);
+
+
 
 /*Inscripcion*/
 

@@ -1,22 +1,22 @@
 package com.webcrafters.helpify.entidades;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.webcrafters.helpify.seguridad.entidades.Usuario;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
+import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Notificacion")
+@Table(name = "notificacion")
 public class Notificacion {
+
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name = "idnotificacion", nullable = false)
@@ -28,19 +28,14 @@ public class Notificacion {
     @Column(name = "tipo", nullable = false, length = 50)
     private String tipo;
 
-    @Column(name = "fechaEnvio", nullable = false)
-    private LocalDate fechaEnvio;
+    @Column(name = "fechaenvio", nullable = false)
+    private LocalDateTime fechaenvio;
 
     @Column(name = "leido", nullable = false)
-    private Boolean leido;
+    private Boolean leido = false;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "idusuario")
     @JsonBackReference("usuario-notificacion")
     private Usuario usuario;
-
-    @ManyToOne
-    @JoinColumn(name = "proyecto_id", referencedColumnName = "idproyecto")
-    @JsonBackReference("proyecto-notificacion")
-    private Proyecto proyecto;
 }
