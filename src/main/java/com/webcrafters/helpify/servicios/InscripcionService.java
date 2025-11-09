@@ -56,7 +56,12 @@ public class InscripcionService implements IInscripcionService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "No hay cupos disponibles en este proyecto");
         }
 
-        boolean existe = inscripcionRepositorio.existsByUniversitarioAndProyecto(universitario, proyecto);
+        boolean existe = inscripcionRepositorio
+                .existsByUniversitario_IduniversitarioAndProyecto_Idproyecto(
+                        universitario.getIduniversitario(),
+                        proyecto.getIdproyecto()
+                );
+
         if (existe) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT, "Ya estás inscrito en este proyecto");

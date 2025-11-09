@@ -31,19 +31,10 @@ public class GlobalExceptionHandle {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponde> handleResponseStatusException(ResponseStatusException ex) {
-        log.error("Error ocurrido", ex);
-        int status = ex.getStatusCode().value();
-        String msg;
-        switch (status) {
-            case 400: msg = MSG_400; break;
-            case 401: msg = MSG_401; break;
-            case 403: msg = MSG_403; break;
-            case 404: msg = MSG_404; break;
-            case 409: msg = MSG_409; break;
-            default: msg = ex.getReason() != null ? ex.getReason() : MSG_500;
-        }
-        ErrorResponde error = new ErrorResponde(status, msg);
-        return new ResponseEntity<>(error, ex.getStatusCode());
+        String mensaje = ex.getReason() != null ? ex.getReason() : ex.getMessage();
+        int status = ex.getStatusCode() != null ? ex.getStatusCode().value() : 500;
+        ErrorResponde body = new ErrorResponde(status, mensaje);
+        return ResponseEntity.status(status).body(body);
     }
 
 
@@ -113,10 +104,7 @@ public class GlobalExceptionHandle {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    /**
-     * Excepción anidada para evitar crear un fichero adicional.
-     * Se usa únicamente dentro de este handler para manejar conflictos (HTTP 409).
-     */
+
     public static class ConflictException extends RuntimeException {
         private static final long serialVersionUID = 1L;
 

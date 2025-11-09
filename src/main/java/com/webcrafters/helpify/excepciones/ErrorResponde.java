@@ -1,5 +1,6 @@
 package com.webcrafters.helpify.excepciones;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +16,8 @@ import java.util.List;
 public class ErrorResponde {
     private int statusCode;
 
-    @JsonProperty("mensaje")
+    @JsonProperty("message")
+    @JsonAlias("mensaje")
     private String message;
 
     private List<String> errors;
