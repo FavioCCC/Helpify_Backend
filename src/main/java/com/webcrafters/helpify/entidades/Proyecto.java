@@ -53,11 +53,21 @@ public class Proyecto {
     @Column(name = "cupoRestante")
     private Integer cupoRestante;
 
+    @Transient
+    public Integer getCupoRestante() {
+        if (cupoMaximo == null) return 0;
+        int inscritos = (inscripciones != null) ? inscripciones.size() : 0;
+        return cupoMaximo - inscritos;
+    }
+
     @Column(name = "imagen", columnDefinition = "TEXT", nullable = false)
     private String imagen;
 
     @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("proyecto-donacion")
     private List<Donacion> donaciones = new ArrayList<>();
+
+    @OneToMany(mappedBy = "proyecto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Inscripcion> inscripciones;
 
 }
