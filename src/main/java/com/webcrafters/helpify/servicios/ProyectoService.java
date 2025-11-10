@@ -87,7 +87,7 @@ public class ProyectoService implements IProyectoService {
     public ProyectoDTO actualizarProyecto(ProyectoDTO proyectoDTO) {
         return proyectoRepositorio.findById(proyectoDTO.getIdproyecto())
                 .map(existing -> {
-                    // Copiar solo campos editables desde el DTO
+                    // Campos editables
                     existing.setNombreproyecto(proyectoDTO.getNombreproyecto());
                     existing.setDescripcion(proyectoDTO.getDescripcion());
                     existing.setMontoobjetivo(proyectoDTO.getMontoobjetivo());
@@ -98,14 +98,47 @@ public class ProyectoService implements IProyectoService {
                     existing.setEscuelabeneficiada(proyectoDTO.getEscuelabeneficiada());
                     existing.setImagen(proyectoDTO.getImagen());
 
-                    // NO permitir cambiar cupoMaximo: conservar el existente
-                    existing.setCupoRestante(existing.getCupoMaximo());
+                    // Manejo seguro de cupoMaximo / cupoRestante:
+                    int newMax = proyectoDTO.getCupoMaximo();
+                    Integer oldMaxObj = existing.getCupoMaximo();
+                    int oldMax = (oldMaxObj == null) ? newMax : oldMaxObj;
+
+                    // Si cambió el cupo máximo, ajustar cupoRestante según los ya utilizados
+                    if (newMax != oldMax) {
+                        int currentRest = (existing.getCupoRestante() != null) ? existing.getCupoRestante() : oldMax;
+                        int used = Math.max(0, oldMax - currentRest); // cuántos ya se registraron
+                        int newRest = Math.max(0, newMax - used);
+                        existing.setCupoMaximo(newMax);
+                        existing.setCupoRestante(newRest);
+                    } else {
+                        // si no cambia el max, mantener cupoRestante tal cual (no resetear)
+                        if (existing.getCupoRestante() == null) {
+                            existing.setCupoRestante(newMax);
+                        }
+                    }
 
                     Proyecto guardado = proyectoRepositorio.save(existing);
-                    return modelMapper.map(guardado, ProyectoDTO.class);
+
+                    // Construir DTO manualmente (evitar ModelMapper en colecciones)
+                    ProyectoDTO dto = new ProyectoDTO();
+                    dto.setIdproyecto(guardado.getIdproyecto());
+                    dto.setNombreproyecto(guardado.getNombreproyecto());
+                    dto.setDescripcion(guardado.getDescripcion());
+                    dto.setMontoobjetivo(guardado.getMontoobjetivo());
+                    dto.setMontorecaudado(guardado.getMontorecaudado());
+                    dto.setFechainicio(guardado.getFechainicio());
+                    dto.setFechafin(guardado.getFechafin());
+                    dto.setNombreorganizacion(guardado.getNombreorganizacion());
+                    dto.setEscuelabeneficiada(guardado.getEscuelabeneficiada());
+                    dto.setCupoMaximo(guardado.getCupoMaximo() != null ? guardado.getCupoMaximo() : 0);
+                    dto.setImagen(guardado.getImagen());
+
+                    dto.setDonaciones(new java.util.ArrayList<>());
+                    dto.setNotificaciones(new java.util.ArrayList<>());
+
+                    return dto;
                 })
-                .orElseThrow(() -> new RuntimeException("Proyecto con ID " + proyectoDTO.getIdproyecto() +
-                        " no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Proyecto con ID " + proyectoDTO.getIdproyecto() + " no encontrado"));
     }
 
     @Override
