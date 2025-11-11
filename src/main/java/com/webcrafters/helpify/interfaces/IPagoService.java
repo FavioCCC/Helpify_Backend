@@ -9,4 +9,5 @@ public interface IPagoService {
     public PagoDTO actualizarPago(PagoDTO pagoDTO);
     public void eliminarPago(Long idPago);
     public List<PagoDTO> listarTodos();
+    List<PagoDTO> listarPagosDelUsuarioActual();
 }

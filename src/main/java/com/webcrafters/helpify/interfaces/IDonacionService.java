@@ -11,5 +11,11 @@ public interface IDonacionService {
     public void eliminarDonacion(Long id);
     public DonacionSinUsuarioyProyectoDTO buscarPorId(Long idDonacion);
     public List<DonacionSinUsuarioyProyectoDTO> listarTodos();
+    DonacionDTO insertarDonacionComoUsuarioActual(DonacionDTO dto);
+    List<DonacionSinUsuarioyProyectoDTO> listarDonacionesDelUsuarioActual();
+    DonacionSinUsuarioyProyectoDTO buscarPorIdRestringiendoAUsuarioActualSiCorresponde(Long idDonacion);
+    DonacionDTO actualizarDonacionComoUsuarioActual(DonacionDTO dto);
+    void eliminarDonacionComoUsuarioActual(Long idDonacion);
+
 
 }

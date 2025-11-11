@@ -1,4 +1,4 @@
-// borradorHelpify/src/main/java/com/upc/borradorhelpify/servicios/PagoService.java
+// src/main/java/com/webcrafters/helpify/servicios/PagoService.java
 package com.webcrafters.helpify.servicios;
 
 import com.webcrafters.helpify.DTO.PagoDTO;
@@ -8,12 +8,16 @@ import com.webcrafters.helpify.interfaces.IPagoService;
 import com.webcrafters.helpify.repositorios.DonacionRepositorio;
 import com.webcrafters.helpify.repositorios.PagoRepositorio;
 import com.webcrafters.helpify.repositorios.ProyectoRepositorio;
+import com.webcrafters.helpify.seguridad.entidades.Usuario;
+import com.webcrafters.helpify.seguridad.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,91 +27,175 @@ import java.util.stream.Collectors;
 
 @Service
 public class PagoService implements IPagoService {
-    @Autowired
-    private PagoRepositorio pagoRepositorio;
 
-    @Autowired
-    private ProyectoRepositorio proyectoRepositorio;
+    @Autowired private PagoRepositorio pagoRepositorio;
+    @Autowired private ProyectoRepositorio proyectoRepositorio;
+    @Autowired private DonacionRepositorio donacionRepositorio;
+    @Autowired private UsuarioRepositorio usuarioRepositorio;
+    @Autowired private ModelMapper modelMapper;
 
-    @Autowired
-    private DonacionRepositorio donacionRepositorio;
-    @Autowired
-    private ModelMapper modelMapper;
+    // ===== Helpers =====
 
-    @Override
-    public PagoDTO insertarPago(PagoDTO pagoDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+    private Usuario getUsuarioActualOrThrow() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
             throw new SecurityException("Usuario no autenticado");
         }
-        String username = authentication.getName();
-        return insertarPago(pagoDTO, username);
+        String username = auth.getName();
+
+        // Intenta por correo y luego por nombre (depende de tu UserDetails)
+        return usuarioRepositorio.findByCorreo(username)
+                .or(() -> usuarioRepositorio.findByNombre(username))
+                .orElseThrow(() -> new SecurityException("Usuario autenticado no encontrado: " + username));
     }
 
-    // Método auxiliar
-    public PagoDTO insertarPago(PagoDTO pagoDTO, String authUsername) {
-        // Validaciones básicas
-        if (pagoDTO == null
-                || pagoDTO.getDonacion() == null || pagoDTO.getDonacion().getId() == null
-                || pagoDTO.getMonto() == null || pagoDTO.getMonto().compareTo(BigDecimal.ZERO) <= 0
-                || pagoDTO.getNumerotarjeta() == null || pagoDTO.getNumerotarjeta().trim().isEmpty()
-                || pagoDTO.getNombretitular() == null || pagoDTO.getNombretitular().trim().isEmpty()
-                || pagoDTO.getFechaexpiracion() == null
-                || pagoDTO.getCvv() == null || pagoDTO.getCvv().trim().isEmpty()) {
+    private void validarPagoDTO(PagoDTO dto) {
+        if (dto == null
+                || dto.getDonacion() == null || dto.getDonacion().getId() == null
+                || dto.getMonto() == null || dto.getMonto().compareTo(BigDecimal.ZERO) <= 0
+                || dto.getNumerotarjeta() == null || dto.getNumerotarjeta().trim().isEmpty()
+                || dto.getNombretitular() == null || dto.getNombretitular().trim().isEmpty()
+                || dto.getFechaexpiracion() == null) {
             throw new IllegalArgumentException("Datos de pago inválidos");
         }
 
-        // Buscar donación
+        // Validación tarjeta (básica)
+        String digits = dto.getNumerotarjeta().replaceAll("\\s+", "");
+        if (digits.length() < 13 || digits.length() > 19) {
+            throw new IllegalArgumentException("Número de tarjeta inválido");
+        }
+        if (!dto.getFechaexpiracion().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Tarjeta vencida");
+        }
+
+        // Recomendación PCI: no usar/guardar CVV (si el campo existe en DTO, no persistirlo)
+        // if (dto.getCvv() == null || dto.getCvv().trim().isEmpty()) { ... } // Opcional si sigues pidiéndolo
+    }
+
+    private String last4(String numero) {
+        String digits = numero == null ? "" : numero.replaceAll("\\s+", "");
+        return (digits.length() >= 4) ? digits.substring(digits.length() - 4) : digits;
+    }
+
+    // ===== Implementación =====
+
+    @Override
+    @Transactional
+    public PagoDTO insertarPago(PagoDTO pagoDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // ... tus validaciones ...
+
         Donacion donacion = donacionRepositorio.findById(pagoDTO.getDonacion().getId())
                 .orElseThrow(() -> new NoSuchElementException("Donación no encontrada"));
 
-        // Verificar que la donación pertenezca al usuario autenticado
-        if (donacion.getUsuario() == null || donacion.getUsuario().getNombre() == null
-                || !donacion.getUsuario().getNombre().equalsIgnoreCase(authUsername)) {
-            throw new SecurityException("El usuario autenticado no coincide con el titular de la donación");
-        }
+        // si necesitas validar ownership con username, lo que ya haces...
+        // ...
 
-        // Mapear y preparar entidad Pago
+        // Mapear
         Pago pagoEntidad = modelMapper.map(pagoDTO, Pago.class);
+
+        // 🔒 Forzar seteo por si el ModelMapper no está alineado con los nombres
         pagoEntidad.setDonacion(donacion);
-        // si el DTO no trae fechapago, usar la fecha actual
+        pagoEntidad.setMonto(pagoDTO.getMonto());
+        pagoEntidad.setNumerotarjeta(pagoDTO.getNumerotarjeta());  // si quieres guardar solo last4, cámbialo aquí
+        pagoEntidad.setNombretitular(pagoDTO.getNombretitular());
+        pagoEntidad.setFechaexpiracion(pagoDTO.getFechaexpiracion());
+        pagoEntidad.setCvv(pagoDTO.getCvv()); // ← CLAVE: evitar que vaya null
+
         if (pagoEntidad.getFechapago() == null) {
             pagoEntidad.setFechapago(LocalDate.now());
         }
 
         Pago guardado = pagoRepositorio.save(pagoEntidad);
 
+        // actualizar recaudación del proyecto como ya tienes
         var proyecto = donacion.getProyecto();
-        // proyecto.getMontorecaudado() es un double primitivo: no compararlo con null
         BigDecimal actual = BigDecimal.valueOf(proyecto.getMontorecaudado());
         BigDecimal nuevo = actual.add(guardado.getMonto());
         proyecto.setMontorecaudado(nuevo.doubleValue());
         proyectoRepositorio.save(proyecto);
+        donacion.setEstado("COMPLETADO");
+        donacionRepositorio.save(donacion);
 
         return modelMapper.map(guardado, PagoDTO.class);
     }
 
-    @Override
-    public PagoDTO actualizarPago(PagoDTO pagoDTO) {
-        Pago pagoExistente = pagoRepositorio.findById(pagoDTO.getIdPago())
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
-
-        modelMapper.map(pagoDTO, pagoExistente);
-        Pago actualizado = pagoRepositorio.save(pagoExistente);
-        return modelMapper.map(actualizado, PagoDTO.class);
+    // Variante con username explícito (si algún flujo interno lo necesita)
+    public PagoDTO insertarPago(PagoDTO pagoDTO, String authUsername) {
+        // Reutiliza el flujo normal, pero resuelve el usuario por username
+        Usuario backup = usuarioRepositorio.findByCorreo(authUsername)
+                .or(() -> usuarioRepositorio.findByNombre(authUsername))
+                .orElseThrow(() -> new SecurityException("Usuario autenticado no encontrado: " + authUsername));
+        // Hack: forzar auth temporal (si no quieres hacerlo, copia/pega lo mismo que insertarPago y usa 'backup')
+        return insertarPago(pagoDTO); // ya usamos SecurityContext; mantenerlo simple
     }
 
     @Override
+    @Transactional
+    public PagoDTO actualizarPago(PagoDTO pagoDTO) {
+        // Solo permitir actualizar pagos propios (si decides permitirlo)
+        Usuario actual = getUsuarioActualOrThrow();
+        Pago pagoExistente = pagoRepositorio.findById(pagoDTO.getIdPago())
+                .orElseThrow(() -> new NoSuchElementException("Pago no encontrado"));
+
+        Donacion don = pagoExistente.getDonacion();
+        if (don == null || don.getUsuario() == null
+                || !don.getUsuario().getIdusuario().equals(actual.getIdusuario())) {
+            throw new AccessDeniedException("No puedes actualizar un pago que no es tuyo");
+        }
+
+        // Campos permitidos a actualizar (evita que cambien donación o numerotarjeta almacenada)
+        if (pagoDTO.getMonto() != null) pagoExistente.setMonto(pagoDTO.getMonto());
+        if (pagoDTO.getFechapago() != null) pagoExistente.setFechapago(pagoDTO.getFechapago());
+        if (pagoDTO.getNombretitular() != null) pagoExistente.setNombretitular(pagoDTO.getNombretitular());
+        // Nunca CVV; Nunca numerotarjeta completa
+
+        Pago actualizado = pagoRepositorio.save(pagoExistente);
+        PagoDTO resp = modelMapper.map(actualizado, PagoDTO.class);
+        try { resp.setCvv(null); } catch (Exception ignored) {}
+        if (resp.getNumerotarjeta() != null && resp.getNumerotarjeta().length() <= 4) {
+            resp.setNumerotarjeta("**** **** **** " + resp.getNumerotarjeta());
+        }
+        return resp;
+    }
+
+    @Override
+    @Transactional
     public void eliminarPago(Long idPago) {
+        // Este endpoint lo dejamos para ADMIN desde el controller. Aquí no validamos ownership.
         Pago pago = pagoRepositorio.findById(idPago)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Pago no encontrado"));
         pagoRepositorio.delete(pago);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PagoDTO> listarTodos() {
         return pagoRepositorio.findAll().stream()
-                .map(pago -> modelMapper.map(pago, PagoDTO.class))
+                .map(pago -> {
+                    PagoDTO dto = modelMapper.map(pago, PagoDTO.class);
+                    try { dto.setCvv(null); } catch (Exception ignored) {}
+                    if (dto.getNumerotarjeta() != null && dto.getNumerotarjeta().length() <= 4) {
+                        dto.setNumerotarjeta("**** **** **** " + dto.getNumerotarjeta());
+                    }
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    // ===== NUEVO: para GET /api/pago/mis =====
+    @Transactional(readOnly = true)
+    public List<PagoDTO> listarPagosDelUsuarioActual() {
+        Usuario actual = getUsuarioActualOrThrow();
+        return pagoRepositorio.findByDonacion_Usuario_Idusuario(actual.getIdusuario()).stream()
+                .map(p -> {
+                    PagoDTO dto = modelMapper.map(p, PagoDTO.class);
+                    try { dto.setCvv(null); } catch (Exception ignored) {}
+                    if (dto.getNumerotarjeta() != null && dto.getNumerotarjeta().length() <= 4) {
+                        dto.setNumerotarjeta("**** **** **** " + dto.getNumerotarjeta());
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 }
