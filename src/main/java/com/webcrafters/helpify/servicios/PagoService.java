@@ -114,6 +114,8 @@ public class PagoService implements IPagoService {
         BigDecimal nuevo = actual.add(guardado.getMonto());
         proyecto.setMontorecaudado(nuevo.doubleValue());
         proyectoRepositorio.save(proyecto);
+        donacion.setEstado("COMPLETADO");
+        donacionRepositorio.save(donacion);
 
         return modelMapper.map(guardado, PagoDTO.class);
     }
