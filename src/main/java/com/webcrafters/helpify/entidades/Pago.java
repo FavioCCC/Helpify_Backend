@@ -37,7 +37,7 @@ public class Pago {
     @Column(name = "fechaexpiracion", nullable = false)
     private LocalDate fechaexpiracion;
 
-    @Column(name = "cvv", nullable = false, length = 3)
+    @Column(nullable = false, name = "cvv")
     private String cvv;
 
     @OneToOne(fetch = FetchType.LAZY)
