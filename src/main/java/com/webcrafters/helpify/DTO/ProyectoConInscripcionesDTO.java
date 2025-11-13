@@ -46,8 +46,8 @@ public class ProyectoConInscripcionesDTO {
     @NotBlank(message = "El nombre de la escuela beneficiada no puede estar vacío")
     private String escuelabeneficiada;
 
-    private int cupoMaximo;
-    private int cupoRestante;
+    private Integer cupoMaximo;
+    private Integer cupoRestante;
 
     private String imagen;
 
