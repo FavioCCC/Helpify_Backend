@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.math.BigDecimal;
 
 @Service
 public class ProyectoService implements IProyectoService {
@@ -268,12 +269,31 @@ public class ProyectoService implements IProyectoService {
     }
 
     @Override
-    public List<ProyectoSoloConDatosDTO> buscarPorMontoObjetivo(double montoobjetivo) {
-        return proyectoRepositorio.findAllByMontoobjetivo(montoobjetivo)
-                .stream()
-                .map(proyecto -> modelMapper.map(proyecto, ProyectoSoloConDatosDTO.class))
+    public List<ProyectoSoloConDatosDTO> buscarPorMontoObjetivo(BigDecimal min, BigDecimal max) {
+        List<Proyecto> proyectos;
+
+        if (min != null && max != null) {
+            if (min.compareTo(max) > 0) {
+                BigDecimal temp = min;
+                min = max;
+                max = temp;
+            }
+            proyectos = proyectoRepositorio.findByMontoobjetivoBetween(min, max);
+        } else if (min != null) {
+            proyectos = proyectoRepositorio.findByMontoobjetivoGreaterThanEqual(min);
+        } else if (max != null) {
+            proyectos = proyectoRepositorio.findByMontoobjetivoLessThanEqual(max);
+        } else {
+            proyectos = proyectoRepositorio.findAll();
+        }
+
+
+        return proyectos.stream()
+                .map(p -> modelMapper.map(p, ProyectoSoloConDatosDTO.class))
                 .collect(Collectors.toList());
     }
+
+
 
     @Override
     public List<ProyectoSoloConDatosDTO> buscarPorFechaInicioEntreFechaFin(LocalDate fechainicio, LocalDate fechafin) {

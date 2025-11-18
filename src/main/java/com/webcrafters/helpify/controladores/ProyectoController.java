@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -83,9 +84,15 @@ public class ProyectoController {
     }
 
     // Búsquedas específicas
-    @GetMapping("/buscar/monto")
-    public List<ProyectoSoloConDatosDTO> buscarPorMonto(@RequestParam double monto) {
-        return proyectoService.buscarPorMontoObjetivo(monto);
+
+
+    @GetMapping("/proyectos/filtrar-monto")
+    public ResponseEntity<List<ProyectoSoloConDatosDTO>> filtrarPorMontoObjetivo(
+            @RequestParam(required = false) BigDecimal min,
+            @RequestParam(required = false) BigDecimal max) {
+
+        List<ProyectoSoloConDatosDTO> lista = proyectoService.buscarPorMontoObjetivo(min, max);
+        return ResponseEntity.ok(lista);
     }
 
     // Búsquedas específicas
