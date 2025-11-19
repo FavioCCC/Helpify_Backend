@@ -8,6 +8,8 @@ INSERT INTO rol (nombre) VALUES ('ROLE_DONANTE');
 INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('87654321', 'DNI', 'Marco', 'Del Pozo', 'Rossi', '888888888', 'marco@email.com', '$2a$12$xTrWRVqMbG905Slsmo4wb.J6Tl3JYLM3Agp8wAveSXIO8omegfkTq', NOW(), 1);
 
 INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('12345678', 'DNI', 'Juan', 'Perez', 'Lopez', '999999999', 'juan@email.com', '$2a$12$fwy1GDh.YYwYXnZXa4gIfuQIQuwkuY8u7e5isB/1HsykxnNaxyKa2', NOW(), 2);
+/*usuario: Manuel | contraseña: Manuel23*/
+INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('12345678', 'DNI', 'Manuel', 'Velazco', 'Reyes', '943689000', 'manu@email.com', '$2a$12$ZdxNLquGsuaUqXwEZI4i2ehGsSx/0VmhAvPwCY/6gnnbtPZIO2bte', NOW(), 2);
 
 /*usuario: Majo | contraseña: majo12345*/
 INSERT INTO usuario (numerodocumento, nombredocumento, nombre, apellidopaterno, apellidomaterno, celular, correo, password, fecharegistro, idrol) VALUES ('87456321', 'DNI', 'Majo', 'Elorrieta', 'Carrion', '111111111', 'majo@email.com', '$2a$12$c/qVM.HTUva77Ku1Nic0g.BquWGyngxooSEq5nmrInlTByLSSQX.G', NOW(), 3);
@@ -45,5 +47,6 @@ INSERT INTO notificacion (mensaje, tipo, fechaEnvio, leido, usuario_id) VALUES (
 
 /*Universitarios*/
 INSERT INTO universitario (codigoestudiante, idusuario) VALUES ('U2025001', 2);
+INSERT INTO universitario (codigoestudiante, idusuario) VALUES ('U2025123', 3);
 
 /*Wishlist*/
