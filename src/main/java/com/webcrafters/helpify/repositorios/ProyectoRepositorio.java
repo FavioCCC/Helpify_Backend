@@ -9,12 +9,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProyectoRepositorio extends JpaRepository<Proyecto, Long> {
     List<Proyecto> findAllByNombreproyectoContainingIgnoreCase(String nombreproyecto);
 
-    List<Proyecto> findAllByMontoobjetivo(double montoobjetivo);
+
+    List<Proyecto> findByMontoobjetivoBetween(BigDecimal min, BigDecimal max);
+
+    List<Proyecto> findByMontoobjetivoGreaterThanEqual(BigDecimal min);
+
+    List<Proyecto> findByMontoobjetivoLessThanEqual(BigDecimal max);
 
     List<Proyecto> findByFechainicioBetween(LocalDate fechainicio, LocalDate fechafin);
 
