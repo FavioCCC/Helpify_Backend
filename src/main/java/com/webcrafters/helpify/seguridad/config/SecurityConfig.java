@@ -60,7 +60,8 @@ public class SecurityConfig {
                                 "/api/usuario",
                                 "/api/comentarios",
                                 "/api/comentario/**",
-                                "/api/inscripcion/inscripciones"
+                                "/api/inscripcion/inscripciones",
+                                "/api/chatbot/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
