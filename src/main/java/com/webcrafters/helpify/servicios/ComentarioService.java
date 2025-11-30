@@ -55,12 +55,14 @@ public class ComentarioService implements IComentarioService {
     }
 
     @Override
-    public void eliminarComentario(Long id, Long idUsuario) {
+    public void eliminarComentario(Long id, Long idUsuario, boolean esAdmin) {
         Comentario comentario = comentarioRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comentario no encontrado con ID: " + id));
 
-        if (!comentario.getUsuario().getIdusuario().equals(idUsuario)) {
-            throw new RuntimeException("No autorizado para eliminar este comentario");
+        if (!esAdmin) {
+            if (comentario.getUsuario() == null || !comentario.getUsuario().getIdusuario().equals(idUsuario)) {
+                throw new RuntimeException("No autorizado para eliminar este comentario");
+            }
         }
 
         comentarioRepositorio.deleteById(id);
