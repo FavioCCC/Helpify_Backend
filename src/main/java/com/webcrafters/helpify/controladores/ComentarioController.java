@@ -71,7 +71,10 @@ public class ComentarioController {
     @DeleteMapping("/comentario/{id}")
     public ResponseEntity<Void> eliminarComentario(@PathVariable Long id) {
         Usuario usuario = obtenerUsuarioAutenticado();
-        comentarioService.eliminarComentario(id, usuario.getIdusuario());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean esAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        comentarioService.eliminarComentario(id, usuario.getIdusuario(), esAdmin);
         return ResponseEntity.noContent().build();
     }
 
