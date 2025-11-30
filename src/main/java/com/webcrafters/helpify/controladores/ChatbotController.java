@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @CrossOrigin(
-        origins = "http://localhost:4200",
+        origins = "${ip.frontend}",
         allowCredentials = "true",
         exposedHeaders = {"Authorization", "Mensaje"}
 )

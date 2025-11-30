@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "http://localhost:4200",
+@CrossOrigin(origins = "${ip.frontend}",
         allowCredentials = "true",
         exposedHeaders = {"Authorization", "Mensaje"})
 @RequestMapping("/api")

@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(
-        origins = "http://localhost:4200",
+        origins = "${ip.frontend}",
         allowCredentials = "true",
         exposedHeaders = {"Authorization"}
 )

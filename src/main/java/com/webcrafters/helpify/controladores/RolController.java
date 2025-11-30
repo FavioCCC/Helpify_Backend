@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "http://localhost:4200",
+@CrossOrigin(origins = "${ip.frontend}",
         allowCredentials = "true",
         exposedHeaders = "Authorization")
 @RequestMapping("/api")
